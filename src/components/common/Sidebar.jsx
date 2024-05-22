@@ -9,7 +9,7 @@ import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   return (
-    <div className="h-screen w-64 bg-gray-800 text-white flex flex-col">
+    <div className="w-64 min-h-screen bg-gray-800 text-white flex flex-col">
       <div className="p-6">
         <h1 className="text-3xl font-semibold mb-5">Admin Panel</h1>
         <ul className="space-y-2">
