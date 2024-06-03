@@ -8,14 +8,14 @@ abstract class BaseCrud {
         $this->connection = $db;
     }
 
-    public function readAll() {
+    public function getAll() {
         $query = 'SELECT * FROM ' . $this->table . ' WHERE deleted_at IS NULL';
         $stmt = $this->connection->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function readSingle($id) {
+    public function getById($id) {
         $query = 'SELECT * FROM ' . $this->table . ' WHERE id = :id AND deleted_at IS NULL';
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
