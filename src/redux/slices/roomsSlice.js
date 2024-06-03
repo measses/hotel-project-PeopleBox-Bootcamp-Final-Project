@@ -27,14 +27,14 @@ export const updateRoom = createAsyncThunk("rooms/updateRoom", async (room) => {
   return response.data;
 });
 
-export const deleteRoom = createAsyncThunk("rooms/deleteRoom", async (key) => {
-  const response = await axios.delete(`${API_URL}/delete_room.php`, {
-    data: { key },
+export const deleteRoom = createAsyncThunk("rooms/deleteRoom", async (id) => {
+  await axios.delete(`${API_URL}/delete_room.php`, {
+    data: { id },
     headers: {
       "Content-Type": "application/json",
     },
   });
-  return key;
+  return id;
 });
 
 const roomsSlice = createSlice({
@@ -52,28 +52,25 @@ const roomsSlice = createSlice({
       })
       .addCase(fetchRooms.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.rooms = Array.isArray(action.payload) ? action.payload : [];
+        state.rooms = action.payload;
       })
       .addCase(fetchRooms.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
       .addCase(addRoom.fulfilled, (state, action) => {
-        state.rooms.push({
-          key: Date.now().toString(), // Benzersiz bir key oluşturun
-          ...action.payload,
-        });
+        state.rooms.push(action.payload);
       })
       .addCase(updateRoom.fulfilled, (state, action) => {
         const index = state.rooms.findIndex(
-          (room) => room.key === action.payload.key
+          (room) => room.id === action.payload.id
         );
         if (index !== -1) {
           state.rooms[index] = action.payload;
         }
       })
       .addCase(deleteRoom.fulfilled, (state, action) => {
-        state.rooms = state.rooms.filter((room) => room.key !== action.payload);
+        state.rooms = state.rooms.filter((room) => room.id !== action.payload);
       });
   },
 });

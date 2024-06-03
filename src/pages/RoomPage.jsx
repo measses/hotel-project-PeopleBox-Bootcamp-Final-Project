@@ -11,57 +11,42 @@ import {
   Modal,
   Row,
   Col,
+  Select,
 } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid"; // uuid paketini içe aktarın
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchRooms,
+  addRoom,
+  updateRoom,
+  deleteRoom,
+} from "../redux/slices/roomsSlice";
 
 const { Search } = Input;
+const { Option } = Select;
 
 const RoomPage = () => {
-  const [rooms, setRooms] = useState([]);
+  const dispatch = useDispatch();
+  const { rooms, status } = useSelector((state) => state.rooms);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingRoom, setEditingRoom] = useState(null);
   const [form] = Form.useForm();
+  const [editForm] = Form.useForm();
 
   useEffect(() => {
-    fetchRooms();
-  }, []);
+    dispatch(fetchRooms());
+  }, [dispatch]);
 
-  const fetchRooms = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost/hotel-project-PeopleBox-Bootcamp-Final-Project/public/api/room/rooms.php"
-      );
-      const roomsWithKey = response.data.map((room) => ({
-        ...room,
-        key: uuidv4(),
-      }));
-      setRooms(roomsWithKey);
-    } catch (error) {
-      console.error("Error fetching rooms:", error);
-    }
-  };
-
-  const handleDelete = async (key) => {
-    try {
-      await axios.delete(
-        `http://localhost/hotel-project-PeopleBox-Bootcamp-Final-Project/public/api/room/delete_room.php`,
-        {
-          data: { key },
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setRooms(rooms.filter((room) => room.key !== key));
-    } catch (error) {
-      console.error("Error deleting room:", error);
-    }
+  const handleDelete = (id) => {
+    dispatch(deleteRoom(id)).then(() => dispatch(fetchRooms()));
   };
 
   const handleEdit = (record) => {
-    console.log("Edit record:", record);
+    setEditingRoom(record);
+    editForm.setFieldsValue(record);
+    setIsEditModalOpen(true);
   };
 
   const handleAdd = () => {
@@ -73,20 +58,22 @@ const RoomPage = () => {
       const values = await form.validateFields();
       form.resetFields();
       setIsModalOpen(false);
-      const newRoom = {
+      dispatch(addRoom(values)).then(() => dispatch(fetchRooms()));
+    } catch (error) {
+      console.error("Validate Failed:", error);
+    }
+  };
+
+  const handleEditOk = async () => {
+    try {
+      const values = await editForm.validateFields();
+      editForm.resetFields();
+      setIsEditModalOpen(false);
+      const updatedRoom = {
+        ...editingRoom,
         ...values,
-        key: uuidv4(), // Benzersiz bir key oluşturun
       };
-      const response = await axios.post(
-        `http://localhost/hotel-project-PeopleBox-Bootcamp-Final-Project/public/api/room/create_room.php`,
-        newRoom,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setRooms([...rooms, newRoom]);
+      dispatch(updateRoom(updatedRoom)).then(() => dispatch(fetchRooms()));
     } catch (error) {
       console.error("Validate Failed:", error);
     }
@@ -94,6 +81,10 @@ const RoomPage = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+
+  const handleEditCancel = () => {
+    setIsEditModalOpen(false);
   };
 
   const handleSearch = (value) => {
@@ -112,54 +103,56 @@ const RoomPage = () => {
 
   const columns = [
     {
-      title: "Room Number",
+      title: "Oda Numarası",
       dataIndex: "room_number",
       key: "room_number",
     },
     {
-      title: "Type",
+      title: "Oda Tipi",
       dataIndex: "type",
       key: "type",
     },
     {
-      title: "Status",
+      title: "Durum",
       dataIndex: "status",
       key: "status",
       render: (status) => {
         let color = "green";
         if (status === "Occupied") color = "volcano";
         if (status === "Available") color = "geekblue";
-        return <Badge color={color} text={status} />;
+        return (
+          <Badge color={color} text={status === "Occupied" ? "Dolu" : "Boş"} />
+        );
       },
     },
     {
-      title: "Check-in Date",
+      title: "Giriş Tarihi",
       dataIndex: "checkin_date",
       key: "checkin_date",
     },
     {
-      title: "Check-out Date",
+      title: "Çıkış Tarihi",
       dataIndex: "checkout_date",
       key: "checkout_date",
     },
     {
-      title: "Guest Name",
+      title: "Misafir Adı",
       dataIndex: "guest_name",
       key: "guest_name",
     },
     {
-      title: "Cleaning Status",
+      title: "Temizlik Durumu",
       dataIndex: "cleaning_status",
       key: "cleaning_status",
     },
     {
-      title: "Price",
+      title: "Fiyat",
       dataIndex: "price",
       key: "price",
-      render: (price) => `$${Number(price).toFixed(2)}`, // Düzeltilmiş render metodu
+      render: (price) => `$${Number(price).toFixed(2)}`,
     },
     {
-      title: "Actions",
+      title: "İşlemler",
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
@@ -169,11 +162,11 @@ const RoomPage = () => {
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
           >
-            Edit
+            Düzenle
           </Button>
           <Popconfirm
-            title="Are you sure to delete this room?"
-            onConfirm={() => handleDelete(record.key)}
+            title="Bu odayı silmek istediğinize emin misiniz?"
+            onConfirm={() => handleDelete(record.id)}
           >
             <Button
               type="primary"
@@ -181,7 +174,7 @@ const RoomPage = () => {
               style={{ backgroundColor: "#FF6347", borderColor: "#FF6347" }}
               icon={<DeleteOutlined />}
             >
-              Delete
+              Sil
             </Button>
           </Popconfirm>
         </Space>
@@ -192,14 +185,14 @@ const RoomPage = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
-        <Typography.Title level={2}>Room Page</Typography.Title>
+        <Typography.Title level={2}>Oda Sayfası</Typography.Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-          Add Room
+          Oda Ekle
         </Button>
       </div>
       <div className="mb-4">
         <Search
-          placeholder="Search rooms"
+          placeholder="Oda ara"
           onSearch={handleSearch}
           onChange={(e) => handleSearch(e.target.value)}
           style={{ width: 200 }}
@@ -208,30 +201,30 @@ const RoomPage = () => {
       <Table
         columns={columns}
         dataSource={filteredRooms}
-        rowKey="key"
+        rowKey="id"
         bordered
       />
       <Modal
-        title="Add New Room"
+        title="Yeni Oda Ekle"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-        okText="Add"
-        cancelText="Cancel"
+        okText="Ekle"
+        cancelText="İptal"
       >
         <Form
           form={form}
           layout="vertical"
           name="roomForm"
-          initialValues={{ status: "Available", cleaning_status: "Clean" }}
+          initialValues={{ status: "Boş", cleaning_status: "Temiz" }}
         >
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
                 name="room_number"
-                label="Room Number"
+                label="Oda Numarası"
                 rules={[
-                  { required: true, message: "Please input the room number!" },
+                  { required: true, message: "Lütfen oda numarasını girin!" },
                 ]}
               >
                 <Input />
@@ -240,12 +233,17 @@ const RoomPage = () => {
             <Col span={12}>
               <Form.Item
                 name="type"
-                label="Room Type"
+                label="Oda Tipi"
                 rules={[
-                  { required: true, message: "Please input the room type!" },
+                  { required: true, message: "Lütfen oda tipini girin!" },
                 ]}
               >
-                <Input />
+                <Select>
+                  <Option value="Tek Kişilik">Tek Kişilik</Option>
+                  <Option value="Çift Kişilik">Çift Kişilik</Option>
+                  <Option value="Süit">Süit</Option>
+                  <Option value="Diğer">Diğer</Option>
+                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -253,52 +251,164 @@ const RoomPage = () => {
             <Col span={12}>
               <Form.Item
                 name="status"
-                label="Status"
-                rules={[
-                  { required: true, message: "Please select the status!" },
-                ]}
+                label="Durum"
+                rules={[{ required: true, message: "Lütfen durumu seçin!" }]}
               >
-                <Input />
+                <Select>
+                  <Option value="Occupied">Dolu</Option>
+                  <Option value="Available">Boş</Option>
+                  <Option value="Other">Diğer</Option>
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
                 name="cleaning_status"
-                label="Cleaning Status"
+                label="Temizlik Durumu"
                 rules={[
                   {
                     required: true,
-                    message: "Please select the cleaning status!",
+                    message: "Lütfen temizlik durumunu seçin!",
                   },
                 ]}
               >
+                <Select>
+                  <Option value="Temiz">Temiz</Option>
+                  <Option value="Kirli">Kirli</Option>
+                  <Option value="Diğer">Diğer</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="checkin_date" label="Giriş Tarihi">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="checkout_date" label="Çıkış Tarihi">
                 <Input />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item name="checkin_date" label="Check-in Date">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="checkout_date" label="Check-out Date">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="guest_name" label="Guest Name">
+              <Form.Item name="guest_name" label="Misafir Adı">
                 <Input />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
                 name="price"
-                label="Price"
-                rules={[{ required: true, message: "Please input the price!" }]}
+                label="Fiyat"
+                rules={[{ required: true, message: "Lütfen fiyatı girin!" }]}
+              >
+                <Input type="number" />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+      <Modal
+        title="Odayı Düzenle"
+        open={isEditModalOpen}
+        onOk={handleEditOk}
+        onCancel={handleEditCancel}
+        okText="Kaydet"
+        cancelText="İptal"
+      >
+        <Form
+          form={editForm}
+          layout="vertical"
+          name="editRoomForm"
+          initialValues={editingRoom}
+        >
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="room_number"
+                label="Oda Numarası"
+                rules={[
+                  { required: true, message: "Lütfen oda numarasını girin!" },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="type"
+                label="Oda Tipi"
+                rules={[
+                  { required: true, message: "Lütfen oda tipini girin!" },
+                ]}
+              >
+                <Select>
+                  <Option value="Single">Tek Kişilik</Option>
+                  <Option value="Double">Çift Kişilik</Option>
+                  <Option value="Suite">Süit</Option>
+                  <Option value="Other">Diğer</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="status"
+                label="Durum"
+                rules={[{ required: true, message: "Lütfen durumu seçin!" }]}
+              >
+                <Select>
+                  <Option value="Occupied">Dolu</Option>
+                  <Option value="Available">Boş</Option>
+                  <Option value="Other">Diğer</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="cleaning_status"
+                label="Temizlik Durumu"
+                rules={[
+                  {
+                    required: true,
+                    message: "Lütfen temizlik durumunu seçin!",
+                  },
+                ]}
+              >
+                <Select>
+                  <Option value="Clean">Temiz</Option>
+                  <Option value="Dirty">Kirli</Option>
+                  <Option value="Other">Diğer</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="checkin_date" label="Giriş Tarihi">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="checkout_date" label="Çıkış Tarihi">
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="guest_name" label="Misafir Adı">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="price"
+                label="Fiyat"
+                rules={[{ required: true, message: "Lütfen fiyatı girin!" }]}
               >
                 <Input type="number" />
               </Form.Item>

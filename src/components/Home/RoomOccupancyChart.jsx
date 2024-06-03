@@ -8,30 +8,30 @@ import {
 import Chart from "react-apexcharts";
 import { Square3Stack3DIcon } from "@heroicons/react/24/outline";
 
-const roomOccupancyChartConfig = {
-  type: "pie",
-  width: 280,
-  height: 280,
-  series: [60, 40], // 60% dolu, 40% boş
-  options: {
-    chart: {
-      toolbar: {
-        show: false,
+const RoomOccupancyChart = ({ occupiedRooms, availableRooms }) => {
+  const roomOccupancyChartConfig = {
+    type: "pie",
+    width: 280,
+    height: 280,
+    series: [occupiedRooms, availableRooms],
+    options: {
+      chart: {
+        toolbar: {
+          show: false,
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      colors: ["#4CAF50", "#F44336"],
+      labels: ["Dolu Odalar", "Boş Odalar"],
+      legend: {
+        show: true,
+        position: "bottom",
       },
     },
-    dataLabels: {
-      enabled: false,
-    },
-    colors: ["#4CAF50", "#F44336"],
-    labels: ["Dolu Odalar", "Boş Odalar"],
-    legend: {
-      show: true,
-      position: "bottom",
-    },
-  },
-};
+  };
 
-const RoomOccupancyChart = () => {
   return (
     <Card>
       <CardHeader

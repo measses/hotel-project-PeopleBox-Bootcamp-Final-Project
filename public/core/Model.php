@@ -33,7 +33,6 @@ abstract class BaseCrud {
         }
         return $stmt->execute();
     }
-
     public function update($id, $data) {
         $set = "";
         foreach ($data as $key => $value) {
@@ -48,6 +47,7 @@ abstract class BaseCrud {
         }
         return $stmt->execute();
     }
+    
 
     public function delete($id) {
         $query = 'UPDATE ' . $this->table . ' SET deleted_at = NOW() WHERE id = :id';
