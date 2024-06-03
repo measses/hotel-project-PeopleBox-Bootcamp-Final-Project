@@ -8,15 +8,15 @@ abstract class BaseCrud {
         $this->connection = $db;
     }
 
-    public function getAll() {
-        $query = 'SELECT * FROM ' . $this->table;
+    public function readAll() {
+        $query = 'SELECT * FROM ' . $this->table . ' WHERE deleted_at IS NULL';
         $stmt = $this->connection->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getById($id) {
-        $query = 'SELECT * FROM ' . $this->table . ' WHERE id = :id';
+    public function readSingle($id) {
+        $query = 'SELECT * FROM ' . $this->table . ' WHERE id = :id AND deleted_at IS NULL';
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -26,7 +26,7 @@ abstract class BaseCrud {
     public function create($data) {
         $fields = implode(", ", array_keys($data));
         $values = ":" . implode(", :", array_keys($data));
-        $query = 'INSERT INTO ' . $this->table . ' (' . $fields . ') VALUES (' . $values . ')';
+        $query = 'INSERT INTO ' . $this->table . ' (' . $fields . ', created_at, updated_at) VALUES (' . $values . ', NOW(), NOW())';
         $stmt = $this->connection->prepare($query);
         foreach ($data as $key => $value) {
             $stmt->bindValue(':' . $key, $value);
@@ -39,7 +39,7 @@ abstract class BaseCrud {
         foreach ($data as $key => $value) {
             $set .= $key . " = :" . $key . ", ";
         }
-        $set = rtrim($set, ", ");
+        $set .= "updated_at = NOW()";
         $query = 'UPDATE ' . $this->table . ' SET ' . $set . ' WHERE id = :id';
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -50,7 +50,7 @@ abstract class BaseCrud {
     }
 
     public function delete($id) {
-        $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
+        $query = 'UPDATE ' . $this->table . ' SET deleted_at = NOW() WHERE id = :id';
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();

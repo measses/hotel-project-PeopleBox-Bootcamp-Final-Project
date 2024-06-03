@@ -12,8 +12,8 @@ $db = $database->connect();
 $room = new Room($db);
 $data = json_decode(file_get_contents("php://input"), true);
 
-if($room->delete($data['id'], $data)) {
-    echo json_encode(['message' => 'Room Updated']);
+if($room->delete($data['id'])) {
+    echo json_encode(['message' => 'Room Deleted']);
 } else {
-    echo json_encode(['message' => 'Room Not Updated']);
+    echo json_encode(['message' => 'Room Not Deleted']);
 }
