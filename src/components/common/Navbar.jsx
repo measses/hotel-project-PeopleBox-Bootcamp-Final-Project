@@ -7,7 +7,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
-const AdminNavbar = () => {
+const Navbar = () => {
   return (
     <div>
       <nav className="bg-gray-800">
@@ -208,4 +208,4 @@ const AdminNavbar = () => {
   );
 };
 
-export default AdminNavbar;
+export default Navbar;
