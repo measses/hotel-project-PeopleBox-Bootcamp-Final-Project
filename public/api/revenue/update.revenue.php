@@ -12,15 +12,10 @@ $database = new Database();
 $db = $database->connect();
 
 $revenue = new Revenue($db);
-
 $data = json_decode(file_get_contents("php://input"), true);
 
-$id = $data['id'];
-
-if($revenue->update($id, $data)) {
+if($revenue->update($data['id'], $data)) {
     echo json_encode(['message' => 'Revenue Updated']);
 } else {
     echo json_encode(['message' => 'Revenue Not Updated']);
 }
-
-?>

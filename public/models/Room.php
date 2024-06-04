@@ -18,6 +18,7 @@ class Room extends BaseCrud{
         parent::__construct($db);
     }
 
+
 }
 
 ?>

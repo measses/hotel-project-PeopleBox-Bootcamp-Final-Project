@@ -19,3 +19,4 @@ if($reservation->update($data['id'], $data)) {
 } else {
     echo json_encode(['message' => 'Reservation Not Updated']);
 }
+?>
