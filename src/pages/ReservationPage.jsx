@@ -11,6 +11,8 @@ import {
   Row,
   Col,
   Select,
+  message,
+  DatePicker,
 } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +22,11 @@ import {
   updateReservation,
   deleteReservation,
 } from "../redux/slices/reservationSlice";
-import moment from "moment";
+import { fetchRooms } from "../redux/slices/roomsSlice";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 
 const { Search } = Input;
 const { Option } = Select;
@@ -28,6 +34,7 @@ const { Option } = Select;
 const ReservationPage = () => {
   const dispatch = useDispatch();
   const { reservations, status } = useSelector((state) => state.reservations);
+  const { rooms } = useSelector((state) => state.rooms);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -37,17 +44,21 @@ const ReservationPage = () => {
 
   useEffect(() => {
     dispatch(fetchReservations());
+    dispatch(fetchRooms());
   }, [dispatch]);
 
   const handleDelete = (id) => {
-    dispatch(deleteReservation(id)).then(() => dispatch(fetchReservations()));
+    dispatch(deleteReservation(id))
+      .then(() => dispatch(fetchReservations()))
+      .then(() => message.success("Rezervasyon başarıyla silindi!"));
   };
+
   const handleEdit = (record) => {
     setEditingReservation(record);
     editForm.setFieldsValue({
       ...record,
-      checkin_date: moment(record.checkin_date).format("YYYY-MM-DD"),
-      checkout_date: moment(record.checkout_date).format("YYYY-MM-DD"),
+      checkin_date: dayjs(record.checkin_date),
+      checkout_date: dayjs(record.checkout_date),
     });
     setIsEditModalOpen(true);
   };
@@ -62,17 +73,14 @@ const ReservationPage = () => {
       form.resetFields();
       setIsModalOpen(false);
 
-      const checkinDate = moment(values.checkin_date);
-      const checkoutDate = moment(values.checkout_date);
-
       const formattedValues = {
         ...values,
-        checkin_date: checkinDate.format("YYYY-MM-DD"),
-        checkout_date: checkoutDate.format("YYYY-MM-DD"),
+        checkin_date: values.checkin_date.format("YYYY-MM-DD"),
+        checkout_date: values.checkout_date.format("YYYY-MM-DD"),
       };
-      dispatch(addReservation(formattedValues)).then(() =>
-        dispatch(fetchReservations())
-      );
+      dispatch(addReservation(formattedValues))
+        .then(() => dispatch(fetchReservations()))
+        .then(() => message.success("Rezervasyon başarıyla eklendi!"));
     } catch (error) {
       console.error("Validate Failed:", error);
     }
@@ -84,23 +92,21 @@ const ReservationPage = () => {
       editForm.resetFields();
       setIsEditModalOpen(false);
 
-      const checkinDate = moment(values.checkin_date);
-      const checkoutDate = moment(values.checkout_date);
-
       const updatedReservation = {
         ...editingReservation,
         ...values,
-        checkin_date: checkinDate.format("YYYY-MM-DD"),
-        checkout_date: checkoutDate.format("YYYY-MM-DD"),
+        checkin_date: values.checkin_date.format("YYYY-MM-DD"),
+        checkout_date: values.checkout_date.format("YYYY-MM-DD"),
       };
 
-      dispatch(updateReservation(updatedReservation)).then(() =>
-        dispatch(fetchReservations())
-      );
+      dispatch(updateReservation(updatedReservation))
+        .then(() => dispatch(fetchReservations()))
+        .then(() => message.success("Rezervasyon başarıyla güncellendi!"));
     } catch (error) {
       console.error("Validate Failed:", error);
     }
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -116,7 +122,7 @@ const ReservationPage = () => {
   const filteredReservations = Array.isArray(reservations)
     ? reservations.filter(
         (item) =>
-          item.room_number?.includes(searchText) ||
+          item.room_id?.toString().includes(searchText) ||
           item.guest_name?.toLowerCase().includes(searchText.toLowerCase()) ||
           item.status?.toLowerCase().includes(searchText.toLowerCase())
       )
@@ -125,8 +131,12 @@ const ReservationPage = () => {
   const columns = [
     {
       title: "Oda Numarası",
-      dataIndex: "room_number",
-      key: "room_number",
+      dataIndex: "room_id",
+      key: "room_id",
+      render: (text) => {
+        const room = rooms.find((room) => room.id === text);
+        return room ? room.room_number : "Bilinmiyor";
+      },
     },
     {
       title: "Misafir Adı",
@@ -137,13 +147,13 @@ const ReservationPage = () => {
       title: "Giriş Tarihi",
       dataIndex: "checkin_date",
       key: "checkin_date",
-      render: (text) => moment(text).format("YYYY-MM-DD"),
+      render: (text) => dayjs(text).format("YYYY-MM-DD"),
     },
     {
       title: "Çıkış Tarihi",
       dataIndex: "checkout_date",
       key: "checkout_date",
-      render: (text) => moment(text).format("YYYY-MM-DD"),
+      render: (text) => dayjs(text).format("YYYY-MM-DD"),
     },
     {
       title: "Durum",
@@ -226,13 +236,19 @@ const ReservationPage = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="room_number"
+                name="room_id"
                 label="Oda Numarası"
                 rules={[
                   { required: true, message: "Lütfen oda numarasını girin!" },
                 ]}
               >
-                <Input />
+                <Select placeholder="Oda Numarası Seçin">
+                  {rooms.map((room) => (
+                    <Option key={room.id} value={room.id}>
+                      {room.room_number}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -254,14 +270,12 @@ const ReservationPage = () => {
                 label="Giriş Tarihi"
                 rules={[
                   { required: true, message: "Lütfen giriş tarihini girin!" },
-                  {
-                    pattern: /^\d{4}-\d{2}-\d{2}$/,
-                    message: "Geçerli bir tarih girin (YYYY-MM-DD)",
-                  },
                 ]}
+                getValueProps={(value) => ({
+                  value: value ? dayjs(value) : "",
+                })}
               >
-                {/* DatePicker yerine Input kullan */}
-                <Input placeholder="YYYY-MM-DD" />
+                <DatePicker format="YYYY-MM-DD" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -270,14 +284,12 @@ const ReservationPage = () => {
                 label="Çıkış Tarihi"
                 rules={[
                   { required: true, message: "Lütfen çıkış tarihini girin!" },
-                  {
-                    pattern: /^\d{4}-\d{2}-\d{2}$/,
-                    message: "Geçerli bir tarih girin (YYYY-MM-DD)",
-                  },
                 ]}
+                getValueProps={(value) => ({
+                  value: value ? dayjs(value) : "",
+                })}
               >
-                {/* DatePicker yerine Input kullan */}
-                <Input placeholder="YYYY-MM-DD" />
+                <DatePicker format="YYYY-MM-DD" />
               </Form.Item>
             </Col>
           </Row>
@@ -327,13 +339,19 @@ const ReservationPage = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="room_number"
+                name="room_id"
                 label="Oda Numarası"
                 rules={[
                   { required: true, message: "Lütfen oda numarasını girin!" },
                 ]}
               >
-                <Input />
+                <Select placeholder="Oda Numarası Seçin">
+                  {rooms.map((room) => (
+                    <Option key={room.id} value={room.id}>
+                      {room.room_number}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -355,12 +373,12 @@ const ReservationPage = () => {
                 label="Giriş Tarihi"
                 rules={[
                   { required: true, message: "Lütfen giriş tarihini girin!" },
-                  {
-                    message: "Geçerli bir tarih girin (YYYY-MM-DD)",
-                  },
                 ]}
+                getValueProps={(value) => ({
+                  value: value ? dayjs(value) : "",
+                })}
               >
-                <Input placeholder="YYYY-MM-DD" />
+                <DatePicker format="YYYY-MM-DD" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -369,13 +387,12 @@ const ReservationPage = () => {
                 label="Çıkış Tarihi"
                 rules={[
                   { required: true, message: "Lütfen çıkış tarihini girin!" },
-                  {
-                    pattern: /^\d{4}-\d{2}-\d{2}$/,
-                    message: "Geçerli bir tarih girin (YYYY-MM-DD)",
-                  },
                 ]}
+                getValueProps={(value) => ({
+                  value: value ? dayjs(value) : "",
+                })}
               >
-                <Input placeholder="YYYY-MM-DD" />
+                <DatePicker format="YYYY-MM-DD" />
               </Form.Item>
             </Col>
           </Row>

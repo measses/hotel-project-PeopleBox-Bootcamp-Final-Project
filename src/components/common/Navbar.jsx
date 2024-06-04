@@ -5,6 +5,7 @@ import {
   FaCalendarCheck,
   FaUsers,
   FaSignOutAlt,
+  FaMoneyBillWave,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
@@ -79,6 +80,12 @@ const Navbar = () => {
                     className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
                   >
                     <FaCalendarCheck className="mr-2" /> Rezervasyonlar
+                  </Link>
+                  <Link
+                    to="/finance"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                  >
+                    <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
                   </Link>
                   <a
                     href="#"
@@ -196,6 +203,9 @@ const Navbar = () => {
             >
               <FaCalendarCheck className="mr-2" /> Rezervasyonlar
             </a>
+            <Link className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium flex items-center">
+              <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
+            </Link>
             <a
               href="#"
               className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium flex items-center"

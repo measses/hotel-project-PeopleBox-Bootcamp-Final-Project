@@ -12,6 +12,7 @@ import {
   Row,
   Col,
   Select,
+  message,
 } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,7 +41,9 @@ const RoomPage = () => {
   }, [dispatch]);
 
   const handleDelete = (id) => {
-    dispatch(deleteRoom(id)).then(() => dispatch(fetchRooms()));
+    dispatch(deleteRoom(id))
+      .then(() => dispatch(fetchRooms()))
+      .then(() => message.success("Oda başarıyla silindi!"));
   };
 
   const handleEdit = (record) => {
@@ -58,7 +61,9 @@ const RoomPage = () => {
       const values = await form.validateFields();
       form.resetFields();
       setIsModalOpen(false);
-      dispatch(addRoom(values)).then(() => dispatch(fetchRooms()));
+      dispatch(addRoom(values))
+        .then(() => dispatch(fetchRooms()))
+        .then(() => message.success("Oda başarıyla eklendi!"));
     } catch (error) {
       console.error("Validate Failed:", error);
     }
@@ -73,7 +78,9 @@ const RoomPage = () => {
         ...editingRoom,
         ...values,
       };
-      dispatch(updateRoom(updatedRoom)).then(() => dispatch(fetchRooms()));
+      dispatch(updateRoom(updatedRoom))
+        .then(() => dispatch(fetchRooms()))
+        .then(() => message.success("Oda başarıyla güncellendi!"));
     } catch (error) {
       console.error("Validate Failed:", error);
     }
@@ -95,9 +102,7 @@ const RoomPage = () => {
     ? rooms.filter(
         (item) =>
           item.room_number?.includes(searchText) ||
-          item.type?.toLowerCase().includes(searchText.toLowerCase()) ||
-          (item.guest_name &&
-            item.guest_name.toLowerCase().includes(searchText.toLowerCase()))
+          item.type?.toLowerCase().includes(searchText.toLowerCase())
       )
     : [];
 
@@ -124,21 +129,6 @@ const RoomPage = () => {
           <Badge color={color} text={status === "Occupied" ? "Dolu" : "Boş"} />
         );
       },
-    },
-    {
-      title: "Giriş Tarihi",
-      dataIndex: "checkin_date",
-      key: "checkin_date",
-    },
-    {
-      title: "Çıkış Tarihi",
-      dataIndex: "checkout_date",
-      key: "checkout_date",
-    },
-    {
-      title: "Misafir Adı",
-      dataIndex: "guest_name",
-      key: "guest_name",
     },
     {
       title: "Temizlik Durumu",
@@ -282,23 +272,6 @@ const RoomPage = () => {
           </Row>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item name="checkin_date" label="Giriş Tarihi">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="checkout_date" label="Çıkış Tarihi">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="guest_name" label="Misafir Adı">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
               <Form.Item
                 name="price"
                 label="Fiyat"
@@ -387,23 +360,6 @@ const RoomPage = () => {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="checkin_date" label="Giriş Tarihi">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="checkout_date" label="Çıkış Tarihi">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="guest_name" label="Misafir Adı">
-                <Input />
-              </Form.Item>
-            </Col>
             <Col span={12}>
               <Form.Item
                 name="price"
