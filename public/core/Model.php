@@ -55,6 +55,14 @@ abstract class BaseCrud {
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+    public function getByRoomNumber($room_number) {
+        $query = 'SELECT * FROM ' . $this->table . ' WHERE room_number = :room_number AND deleted_at IS NULL';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindParam(':room_number', $room_number);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>

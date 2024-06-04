@@ -14,9 +14,16 @@ $db = $database->connect();
 $reservation = new Reservation($db);
 $data = json_decode(file_get_contents("php://input"), true);
 
-if($reservation->create($data)) {
+
+if (isset($data['room_number'])) {
+    $data['room_id'] = $data['room_number'];
+    unset($data['room_number']);
+}
+
+if ($reservation->create($data)) {
     echo json_encode(['message' => 'Reservation Created']);
 } else {
     echo json_encode(['message' => 'Reservation Not Created']);
 }
+
 ?>

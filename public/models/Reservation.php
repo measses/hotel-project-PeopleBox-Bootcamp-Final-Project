@@ -5,7 +5,7 @@ include_once '../../core/Model.php';
 class Reservation extends BaseCrud {
     // Properties
     public $id;
-    public $room_number;
+    public $room_id;
     public $guest_name;
     public $checkin_date;
     public $checkout_date;
@@ -21,4 +21,4 @@ class Reservation extends BaseCrud {
         parent::__construct($db);
     }
 }
-
+?>
