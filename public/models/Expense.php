@@ -7,7 +7,7 @@ class Expense extends BaseCrud {
     public $id;
     public $description;
     public $amount;
-    public $expense_date;
+    public $date;
     public $category;
     public $created_at;
     public $updated_at;
