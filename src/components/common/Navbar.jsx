@@ -186,29 +186,29 @@ const Navbar = () => {
           <div className="space-y-1 px-2 pb-3 pt-2">
             <Link
               to="/"
-              className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium flex items-center"
+              className="bg-gray-900 text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
               aria-current="page"
             >
               <FaTachometerAlt className="mr-2" /> Anasayfa
             </Link>
             <Link
               to="/rooms"
-              className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium flex items-center"
+              className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
             >
               <FaBed className="mr-2" /> Odaların Durumu
             </Link>
             <a
               href="#"
-              className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium flex items-center"
+              className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
             >
               <FaCalendarCheck className="mr-2" /> Rezervasyonlar
             </a>
-            <Link className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium flex items-center">
+            <Link className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center">
               <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
             </Link>
             <a
               href="#"
-              className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium flex items-center"
+              className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
             >
               <FaUsers className="mr-2" /> Kullanıcı Yönetimi
             </a>

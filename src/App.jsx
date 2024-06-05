@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import RoomPage from "./pages/RoomPage";
 import ReservationPage from "./pages/ReservationPage";
 import Finance from "./pages/Finance";
+import Footer from "./components/common/Footer";
 
 const App = () => {
   return (
@@ -16,6 +17,8 @@ const App = () => {
         <Route path="/reservations" element={<ReservationPage />} />
         <Route path="/finance" element={<Finance />} />
       </Routes>
+      <div style={{ marginBottom: "50px" }}></div>
+      <Footer />
     </Router>
   );
 };

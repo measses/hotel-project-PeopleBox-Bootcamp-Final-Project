@@ -33,8 +33,10 @@ const { Option } = Select;
 
 const ReservationPage = () => {
   const dispatch = useDispatch();
-  const { reservations, status } = useSelector((state) => state.reservations);
-  const { rooms } = useSelector((state) => state.rooms);
+  const { reservations, status: reservationsStatus } = useSelector(
+    (state) => state.reservations
+  );
+  const { rooms, status: roomsStatus } = useSelector((state) => state.rooms);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -59,6 +61,9 @@ const ReservationPage = () => {
       ...record,
       checkin_date: dayjs(record.checkin_date),
       checkout_date: dayjs(record.checkout_date),
+      room_number:
+        rooms.find((room) => room.id === record.room_id)?.room_number ||
+        record.room_number,
     });
     setIsEditModalOpen(true);
   };
@@ -97,6 +102,9 @@ const ReservationPage = () => {
         ...values,
         checkin_date: values.checkin_date.format("YYYY-MM-DD"),
         checkout_date: values.checkout_date.format("YYYY-MM-DD"),
+        room_id:
+          rooms.find((room) => room.room_number === values.room_number)?.id ||
+          editingReservation.room_id,
       };
 
       dispatch(updateReservation(updatedReservation))
@@ -122,7 +130,7 @@ const ReservationPage = () => {
   const filteredReservations = Array.isArray(reservations)
     ? reservations.filter(
         (item) =>
-          item.room_id?.toString().includes(searchText) ||
+          item.room_number?.includes(searchText) ||
           item.guest_name?.toLowerCase().includes(searchText.toLowerCase()) ||
           item.status?.toLowerCase().includes(searchText.toLowerCase())
       )
@@ -131,12 +139,10 @@ const ReservationPage = () => {
   const columns = [
     {
       title: "Oda Numarası",
-      dataIndex: "room_id",
-      key: "room_id",
-      render: (text) => {
-        const room = rooms.find((room) => room.id === text);
-        return room ? room.room_number : "Bilinmiyor";
-      },
+      dataIndex: "room_number",
+      key: "room_number",
+      render: (text, record) =>
+        rooms.find((room) => room.id === record.room_id)?.room_number || text,
     },
     {
       title: "Misafir Adı",
@@ -236,15 +242,15 @@ const ReservationPage = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="room_id"
+                name="room_number"
                 label="Oda Numarası"
                 rules={[
                   { required: true, message: "Lütfen oda numarasını girin!" },
                 ]}
               >
-                <Select placeholder="Oda Numarası Seçin">
+                <Select>
                   {rooms.map((room) => (
-                    <Option key={room.id} value={room.id}>
+                    <Option key={room.id} value={room.room_number}>
                       {room.room_number}
                     </Option>
                   ))}
@@ -339,15 +345,15 @@ const ReservationPage = () => {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                name="room_id"
+                name="room_number"
                 label="Oda Numarası"
                 rules={[
                   { required: true, message: "Lütfen oda numarasını girin!" },
                 ]}
               >
-                <Select placeholder="Oda Numarası Seçin">
+                <Select>
                   {rooms.map((room) => (
-                    <Option key={room.id} value={room.id}>
+                    <Option key={room.id} value={room.room_number}>
                       {room.room_number}
                     </Option>
                   ))}
