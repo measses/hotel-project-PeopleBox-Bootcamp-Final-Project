@@ -8,20 +8,19 @@ import {
 import Chart from "react-apexcharts";
 import { Square3Stack3DIcon } from "@heroicons/react/24/outline";
 
-const revenueExpensesChartConfig = {
-  type: "line",
-  height: 240,
-  series: [
+const RevenueExpensesChart = ({ revenueData = [], expensesData = [] }) => {
+  const series = [
     {
       name: "Gelir",
-      data: [500, 700, 800, 600, 700, 900, 1000, 800, 950, 1100, 1050, 1200],
+      data: revenueData.map((item) => item.amount),
     },
     {
       name: "Gider",
-      data: [400, 500, 600, 500, 600, 700, 750, 600, 700, 850, 800, 950],
+      data: expensesData.map((item) => item.amount),
     },
-  ],
-  options: {
+  ];
+
+  const options = {
     chart: {
       toolbar: {
         show: false,
@@ -98,10 +97,8 @@ const revenueExpensesChartConfig = {
     tooltip: {
       theme: "dark",
     },
-  },
-};
+  };
 
-const RevenueExpensesChart = () => {
   return (
     <Card className="mb-8">
       <CardHeader
@@ -127,7 +124,7 @@ const RevenueExpensesChart = () => {
         </div>
       </CardHeader>
       <CardBody className="px-2 pb-0">
-        <Chart {...revenueExpensesChartConfig} />
+        <Chart type="line" height={240} series={series} options={options} />
       </CardBody>
     </Card>
   );

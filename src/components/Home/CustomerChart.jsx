@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardBody,
@@ -7,96 +7,125 @@ import {
 } from "@material-tailwind/react";
 import Chart from "react-apexcharts";
 import { Square3Stack3DIcon } from "@heroicons/react/24/outline";
-
-const customerChartConfig = {
-  type: "bar",
-  height: 240,
-  series: [
-    {
-      name: "Müşteri Sayısı",
-      data: [40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260],
-    },
-  ],
-  options: {
-    chart: {
-      toolbar: {
-        show: false,
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    colors: ["#1E90FF"],
-    plotOptions: {
-      bar: {
-        columnWidth: "40%",
-        borderRadius: 2,
-      },
-    },
-    xaxis: {
-      axisTicks: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-      labels: {
-        style: {
-          colors: "#616161",
-          fontSize: "12px",
-          fontFamily: "inherit",
-          fontWeight: 400,
-        },
-      },
-      categories: [
-        "Ocak",
-        "Şubat",
-        "Mart",
-        "Nisan",
-        "Mayıs",
-        "Haziran",
-        "Temmuz",
-        "Ağustos",
-        "Eylül",
-        "Ekim",
-        "Kasım",
-        "Aralık",
-      ],
-    },
-    yaxis: {
-      labels: {
-        style: {
-          colors: "#616161",
-          fontSize: "12px",
-          fontFamily: "inherit",
-          fontWeight: 400,
-        },
-      },
-    },
-    grid: {
-      show: true,
-      borderColor: "#dddddd",
-      strokeDashArray: 5,
-      xaxis: {
-        lines: {
-          show: true,
-        },
-      },
-      padding: {
-        top: 5,
-        right: 20,
-      },
-    },
-    fill: {
-      opacity: 0.8,
-    },
-    tooltip: {
-      theme: "dark",
-    },
-  },
-};
+import { useDispatch, useSelector } from "react-redux";
+import { fetchExpenses } from "../../redux/slices/expenseSlice";
+import { fetchRevenue } from "../../redux/slices/revenueSlice";
 
 const CustomerChart = () => {
+  const dispatch = useDispatch();
+  const [customerData, setCustomerData] = useState([]);
+
+  useEffect(() => {
+    dispatch(fetchExpenses());
+    dispatch(fetchRevenue());
+  }, [dispatch]);
+
+  const { expenses } = useSelector((state) => state.expenses);
+  const { revenue } = useSelector((state) => state.revenue);
+
+  useEffect(() => {
+    // Gelir ve gider verilerini işleyerek müşteri sayısını hesapla
+    const totalCustomers = getTotalCustomers(revenue, expenses);
+    setCustomerData(totalCustomers);
+  }, [revenue, expenses]);
+
+  const getTotalCustomers = (revenueData, expensesData) => {
+    // Gelir ve gider verilerini işleyerek müşteri sayısını hesapla
+    const totalRevenueCustomers = revenueData.length;
+    const totalExpensesCustomers = expensesData.length;
+    const totalCustomers = totalRevenueCustomers + totalExpensesCustomers;
+    return [totalCustomers];
+  };
+
+  // Grafik konfigürasyonunu oluştur
+  const customerChartConfig = {
+    type: "bar",
+    height: 240,
+    series: [
+      {
+        name: "Müşteri Sayısı",
+        data: customerData,
+      },
+    ],
+    options: {
+      chart: {
+        toolbar: {
+          show: false,
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      colors: ["#1E90FF"],
+      plotOptions: {
+        bar: {
+          columnWidth: "40%",
+          borderRadius: 2,
+        },
+      },
+      xaxis: {
+        axisTicks: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+        labels: {
+          style: {
+            colors: "#616161",
+            fontSize: "12px",
+            fontFamily: "inherit",
+            fontWeight: 400,
+          },
+        },
+        categories: [
+          "Ocak",
+          "Şubat",
+          "Mart",
+          "Nisan",
+          "Mayıs",
+          "Haziran",
+          "Temmuz",
+          "Ağustos",
+          "Eylül",
+          "Ekim",
+          "Kasım",
+          "Aralık",
+        ],
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: "#616161",
+            fontSize: "12px",
+            fontFamily: "inherit",
+            fontWeight: 400,
+          },
+        },
+      },
+      grid: {
+        show: true,
+        borderColor: "#dddddd",
+        strokeDashArray: 5,
+        xaxis: {
+          lines: {
+            show: true,
+          },
+        },
+        padding: {
+          top: 5,
+          right: 20,
+        },
+      },
+      fill: {
+        opacity: 0.8,
+      },
+      tooltip: {
+        theme: "dark",
+      },
+    },
+  };
+
   return (
     <Card>
       <CardHeader
