@@ -3,7 +3,7 @@ import RevenueExpensesChart from "../components/Home/RevenueExpensesChart";
 import CustomerChart from "../components/Home/CustomerChart";
 import RoomOccupancyChart from "../components/Home/RoomOccupancyChart";
 import CheckinCheckoutChart from "../components/Home/CheckinCheckoutChart";
-import Users from "../components/Home/Users";
+import Users from "./Users";
 import TodoList from "../components/Home/TodoList";
 import Footer from "../components/common/Footer";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +11,7 @@ import { fetchRooms } from "../redux/slices/roomsSlice";
 import { fetchExpenses } from "../redux/slices/expenseSlice";
 import { fetchRevenue } from "../redux/slices/revenueSlice";
 
-const Dashboard = () => {
+const Home = () => {
   const dispatch = useDispatch();
   const { rooms } = useSelector((state) => state.rooms);
   const { expenses } = useSelector((state) => state.expenses);
@@ -43,4 +43,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Home;

@@ -22,7 +22,7 @@ import {
   updateReservation,
   deleteReservation,
 } from "../redux/slices/reservationSlice";
-import { fetchRooms } from "../redux/slices/roomsSlice";
+import { fetchRooms, updateRoom } from "../redux/slices/roomsSlice";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
@@ -33,10 +33,8 @@ const { Option } = Select;
 
 const ReservationPage = () => {
   const dispatch = useDispatch();
-  const { reservations, status: reservationsStatus } = useSelector(
-    (state) => state.reservations
-  );
-  const { rooms, status: roomsStatus } = useSelector((state) => state.rooms);
+  const { reservations } = useSelector((state) => state.reservations);
+  const { rooms } = useSelector((state) => state.rooms);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -75,43 +73,75 @@ const ReservationPage = () => {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      form.resetFields();
-      setIsModalOpen(false);
+      const room = rooms.find(
+        (room) => room.room_number === values.room_number
+      );
+      const checkinDate = dayjs(values.checkin_date);
+      const checkoutDate = dayjs(values.checkout_date);
+      const totalDays = checkoutDate.diff(checkinDate, "day");
+      const totalPrice = room.price * totalDays;
 
       const formattedValues = {
         ...values,
-        checkin_date: values.checkin_date.format("YYYY-MM-DD"),
-        checkout_date: values.checkout_date.format("YYYY-MM-DD"),
+        checkin_date: checkinDate.format("YYYY-MM-DD"),
+        checkout_date: checkoutDate.format("YYYY-MM-DD"),
+        total_price: totalPrice,
+        room_id: room.id,
       };
-      dispatch(addReservation(formattedValues))
-        .then(() => dispatch(fetchReservations()))
-        .then(() => message.success("Rezervasyon başarıyla eklendi!"));
+
+      form.resetFields();
+      setIsModalOpen(false);
+
+      const result = await dispatch(addReservation(formattedValues)).unwrap();
+
+      if (result.success) {
+        dispatch(fetchReservations());
+        message.success("Rezervasyon başarıyla eklendi!");
+      } else {
+        message.error(result.message || "Rezervasyon eklenemedi.");
+      }
     } catch (error) {
       console.error("Validate Failed:", error);
+      message.error("Rezervasyon eklenemedi.");
     }
   };
 
   const handleEditOk = async () => {
     try {
       const values = await editForm.validateFields();
-      editForm.resetFields();
-      setIsEditModalOpen(false);
+      const room = rooms.find(
+        (room) => room.room_number === values.room_number
+      );
+      const checkinDate = dayjs(values.checkin_date);
+      const checkoutDate = dayjs(values.checkout_date);
+      const totalDays = checkoutDate.diff(checkinDate, "day");
+      const totalPrice = room.price * totalDays;
 
       const updatedReservation = {
         ...editingReservation,
         ...values,
-        checkin_date: values.checkin_date.format("YYYY-MM-DD"),
-        checkout_date: values.checkout_date.format("YYYY-MM-DD"),
-        room_id:
-          rooms.find((room) => room.room_number === values.room_number)?.id ||
-          editingReservation.room_id,
+        checkin_date: checkinDate.format("YYYY-MM-DD"),
+        checkout_date: checkoutDate.format("YYYY-MM-DD"),
+        total_price: totalPrice,
+        room_id: room.id || editingReservation.room_id,
       };
 
-      dispatch(updateReservation(updatedReservation))
-        .then(() => dispatch(fetchReservations()))
-        .then(() => message.success("Rezervasyon başarıyla güncellendi!"));
+      editForm.resetFields();
+      setIsEditModalOpen(false);
+
+      const result = await dispatch(
+        updateReservation(updatedReservation)
+      ).unwrap();
+
+      if (result.success) {
+        dispatch(fetchReservations());
+        message.success("Rezervasyon başarıyla güncellendi!");
+      } else {
+        message.error(result.message || "Rezervasyon güncellenemedi.");
+      }
     } catch (error) {
       console.error("Validate Failed:", error);
+      message.error("Rezervasyon güncellenemedi.");
     }
   };
 

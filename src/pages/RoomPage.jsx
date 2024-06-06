@@ -22,6 +22,10 @@ import {
   updateRoom,
   deleteRoom,
 } from "../redux/slices/roomsSlice";
+import {
+  fetchReservations,
+  updateReservation,
+} from "../redux/slices/reservationSlice";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -29,6 +33,7 @@ const { Option } = Select;
 const RoomPage = () => {
   const dispatch = useDispatch();
   const { rooms, status } = useSelector((state) => state.rooms);
+  const { reservations } = useSelector((state) => state.reservations);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -38,7 +43,21 @@ const RoomPage = () => {
 
   useEffect(() => {
     dispatch(fetchRooms());
+    dispatch(fetchReservations());
   }, [dispatch]);
+
+  useEffect(() => {
+    rooms.forEach((room) => {
+      const reservation = reservations.find(
+        (res) => res.room_id === room.id && res.status === "confirmed"
+      );
+      if (reservation && room.status !== "Occupied") {
+        dispatch(updateRoom({ ...room, status: "Occupied" }));
+      } else if (!reservation && room.status === "Occupied") {
+        dispatch(updateRoom({ ...room, status: "Available" }));
+      }
+    });
+  }, [rooms, reservations, dispatch]);
 
   const handleDelete = (id) => {
     dispatch(deleteRoom(id))
@@ -61,11 +80,19 @@ const RoomPage = () => {
       const values = await form.validateFields();
       form.resetFields();
       setIsModalOpen(false);
-      dispatch(addRoom(values))
-        .then(() => dispatch(fetchRooms()))
-        .then(() => message.success("Oda başarıyla eklendi!"));
+      const result = await dispatch(addRoom(values)).unwrap();
+
+      if (result.message === "Room Created") {
+        dispatch(fetchRooms());
+        message.success("Oda başarıyla eklendi!");
+      } else if (result.message === "Room Not Created") {
+        message.error("Oda numarası zaten mevcut!");
+      } else {
+        message.error("Oda eklenemedi.");
+      }
     } catch (error) {
       console.error("Validate Failed:", error);
+      message.error("Oda eklenemedi.");
     }
   };
 
@@ -78,11 +105,21 @@ const RoomPage = () => {
         ...editingRoom,
         ...values,
       };
-      dispatch(updateRoom(updatedRoom))
-        .then(() => dispatch(fetchRooms()))
-        .then(() => message.success("Oda başarıyla güncellendi!"));
+      const result = await dispatch(updateRoom(updatedRoom)).unwrap();
+
+      if (result.message === "Room Updated") {
+        dispatch(fetchRooms());
+        message.success("Oda başarıyla güncellendi!");
+      } else if (
+        result.error === "Room number already exists or other error occurred"
+      ) {
+        message.error("Oda numarası zaten mevcut veya başka bir hata oluştu!");
+      } else {
+        message.error("Oda güncellenemedi.");
+      }
     } catch (error) {
       console.error("Validate Failed:", error);
+      message.error("Oda güncellenemedi.");
     }
   };
 
@@ -206,7 +243,7 @@ const RoomPage = () => {
           form={form}
           layout="vertical"
           name="roomForm"
-          initialValues={{ status: "Boş", cleaning_status: "Temiz" }}
+          initialValues={{ status: "Available", cleaning_status: "Temiz" }}
         >
           <Row gutter={16}>
             <Col span={12}>
@@ -229,10 +266,10 @@ const RoomPage = () => {
                 ]}
               >
                 <Select>
-                  <Option value="Tek Kişilik">Tek Kişilik</Option>
-                  <Option value="Çift Kişilik">Çift Kişilik</Option>
-                  <Option value="Süit">Süit</Option>
-                  <Option value="Diğer">Diğer</Option>
+                  <Option value="Single">Tek Kişilik</Option>
+                  <Option value="Double">Çift Kişilik</Option>
+                  <Option value="Suite">Süit</Option>
+                  <Option value="Other">Diğer</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -263,9 +300,9 @@ const RoomPage = () => {
                 ]}
               >
                 <Select>
-                  <Option value="Temiz">Temiz</Option>
-                  <Option value="Kirli">Kirli</Option>
-                  <Option value="Diğer">Diğer</Option>
+                  <Option value="Clean">Temiz</Option>
+                  <Option value="Dirty">Kirli</Option>
+                  <Option value="Other">Diğer</Option>
                 </Select>
               </Form.Item>
             </Col>

@@ -1,15 +1,32 @@
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../redux/slices/authSlice";
 import {
-  FaTachometerAlt,
+  FaSignOutAlt,
+  FaSignInAlt,
+  FaUserPlus,
+  FaHome,
+  FaUserCog,
   FaBed,
   FaCalendarCheck,
-  FaUsers,
-  FaSignOutAlt,
   FaMoneyBillWave,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout()).unwrap();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
   return (
     <div>
       <nav className="bg-gray-800">
@@ -67,118 +84,77 @@ const Navbar = () => {
                     className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
                     aria-current="page"
                   >
-                    <FaTachometerAlt className="mr-2" /> Anasayfa
+                    <FaHome className="mr-2" /> Anasayfa
                   </Link>
-                  <Link
-                    to="/rooms"
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
-                  >
-                    <FaBed className="mr-2" /> Odaların Durumu
-                  </Link>
-                  <Link
-                    to="/reservations"
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
-                  >
-                    <FaCalendarCheck className="mr-2" /> Rezervasyonlar
-                  </Link>
-                  <Link
-                    to="/finance"
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
-                  >
-                    <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
-                  </Link>
-                  <a
-                    href="#"
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
-                  >
-                    <FaUsers className="mr-2" /> Kullanıcı Yönetimi
-                  </a>
+
+                  {user?.user_type === "admin" && (
+                    <Link
+                      to="/finance"
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                    >
+                      <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
+                    </Link>
+                  )}
+                  {user && (
+                    <>
+                      <Link
+                        to="/rooms"
+                        className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                      >
+                        <FaBed className="mr-2" /> Odaların Durumu
+                      </Link>
+                      <Link
+                        to="/reservations"
+                        className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                      >
+                        <FaCalendarCheck className="mr-2" /> Rezervasyonlar
+                      </Link>
+                      {user.user_type === "admin" && (
+                        <Link
+                          to="/user-management"
+                          className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                        >
+                          <FaUserCog className="mr-2" /> Kullanıcı Yönetimi
+                        </Link>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <a
-                href="#"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
-              >
-                <FaSignOutAlt className="mr-2" /> Çıkış Yap
-              </a>
-              <button
-                type="button"
-                className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <span className="absolute -inset-1.5"></span>
-                <span className="sr-only">Bildirimleri Gör</span>
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-                  />
-                </svg>
-              </button>
-              <div className="relative ml-3">
-                <div>
-                  <button
-                    type="button"
-                    className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    id="user-menu-button"
-                    aria-expanded="false"
-                    aria-haspopup="true"
+              {user ? (
+                <>
+                  <Link
+                    to="/profile"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
                   >
-                    <span className="absolute -inset-1.5"></span>
-                    <span className="sr-only">Kullanıcı menüsünü aç</span>
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
-                  </button>
-                </div>
-                {/* Dropdown menu, show/hide based on menu state. */}
-                {/* <div
-                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="user-menu-button"
-                  tabIndex="-1"
-                >
+                    <FaUserCog className="mr-2" /> Profil
+                  </Link>
                   <a
                     href="#"
-                    className="block px-4 py-2 text-sm text-gray-700"
-                    role="menuitem"
-                    tabIndex="-1"
-                    id="user-menu-item-0"
+                    onClick={handleLogout}
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
                   >
-                    Profiliniz
+                    <FaSignOutAlt className="mr-2" /> Çıkış Yap
                   </a>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700"
-                    role="menuitem"
-                    tabIndex="-1"
-                    id="user-menu-item-1"
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
                   >
-                    Ayarlar
-                  </a>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700"
-                    role="menuitem"
-                    tabIndex="-1"
-                    id="user-menu-item-2"
+                    <FaSignInAlt className="mr-2" /> Giriş Yap
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
                   >
-                    Çıkış Yap
-                  </a>
-                </div> */}
-              </div>
+                    <FaUserPlus className="mr-2" /> Kayıt Ol
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -189,29 +165,56 @@ const Navbar = () => {
               className="bg-gray-900 text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
               aria-current="page"
             >
-              <FaTachometerAlt className="mr-2" /> Anasayfa
+              <FaHome className="mr-2" /> Anasayfa
             </Link>
-            <Link
-              to="/rooms"
-              className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
-            >
-              <FaBed className="mr-2" /> Odaların Durumu
-            </Link>
-            <a
-              href="#"
-              className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
-            >
-              <FaCalendarCheck className="mr-2" /> Rezervasyonlar
-            </a>
-            <Link className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center">
-              <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
-            </Link>
-            <a
-              href="#"
-              className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
-            >
-              <FaUsers className="mr-2" /> Kullanıcı Yönetimi
-            </a>
+            {user?.user_type === "admin" && (
+              <Link
+                to="/finance"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
+              >
+                <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
+              </Link>
+            )}
+            {user && (
+              <>
+                <Link
+                  to="/rooms"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
+                >
+                  <FaBed className="mr-2" /> Odaların Durumu
+                </Link>
+                <Link
+                  to="/reservations"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
+                >
+                  <FaCalendarCheck className="mr-2" /> Rezervasyonlar
+                </Link>
+                {user.user_type === "admin" && (
+                  <Link
+                    to="/user-management"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
+                  >
+                    <FaUserCog className="mr-2" /> Kullanıcı Yönetimi
+                  </Link>
+                )}
+              </>
+            )}
+            {!user && (
+              <>
+                <Link
+                  to="/login"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
+                >
+                  <FaSignInAlt className="mr-2" /> Giriş Yap
+                </Link>
+                <Link
+                  to="/register"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
+                >
+                  <FaUserPlus className="mr-2" /> Kayıt Ol
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>

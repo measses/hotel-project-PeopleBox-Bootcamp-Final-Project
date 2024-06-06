@@ -1,7 +1,13 @@
 import React from "react";
+import Users from "../pages/Users";
 
-function UserManagement() {
-  return <div>UserManagement</div>;
-}
+const UserManagement = () => {
+  return (
+    <div>
+      <Users />
+      {/* Buraya ek yönetim işlevleri ekleyebilirsiniz */}
+    </div>
+  );
+};
 
 export default UserManagement;

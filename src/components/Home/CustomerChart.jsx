@@ -24,20 +24,17 @@ const CustomerChart = () => {
   const { revenue } = useSelector((state) => state.revenue);
 
   useEffect(() => {
-    // Gelir ve gider verilerini işleyerek müşteri sayısını hesapla
     const totalCustomers = getTotalCustomers(revenue, expenses);
     setCustomerData(totalCustomers);
   }, [revenue, expenses]);
 
   const getTotalCustomers = (revenueData, expensesData) => {
-    // Gelir ve gider verilerini işleyerek müşteri sayısını hesapla
     const totalRevenueCustomers = revenueData.length;
     const totalExpensesCustomers = expensesData.length;
     const totalCustomers = totalRevenueCustomers + totalExpensesCustomers;
     return [totalCustomers];
   };
 
-  // Grafik konfigürasyonunu oluştur
   const customerChartConfig = {
     type: "bar",
     height: 240,
