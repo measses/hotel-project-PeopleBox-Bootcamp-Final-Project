@@ -18,7 +18,7 @@ $username = $data['username'];
 $email = $data['email'];
 $password = $data['password'];
 $confirm_password = $data['confirm_password'];
-$user_type = $data['user_type'] ?? 'user'; // Default to 'user' if not provided
+$user_type = $data['user_type'] ?? 'user'; 
 
 if ($password !== $confirm_password) {
     echo json_encode(['success' => false, 'message' => 'Parolalar eşleşmiyor']);

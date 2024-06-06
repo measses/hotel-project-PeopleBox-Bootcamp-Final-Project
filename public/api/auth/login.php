@@ -1,7 +1,7 @@
 <?php
 include '../auth/session/start_session.php';
-include '../../config/config.php'; // JWT Config dosyasını dahil edelim
-require '../../vendor/autoload.php'; // JWT kütüphanesini dahil edelim
+include '../../config/config.php'; 
+require '../../vendor/autoload.php'; 
 
 use \Firebase\JWT\JWT;
 
@@ -27,7 +27,7 @@ if (isset($data["username"]) && isset($data["password"])) {
     $result = $user->login($username, $password);
     if ($result) {
         $issuedAt = time();
-        $expirationTime = $issuedAt + JWT_EXPIRY;  // jwt valid for 1 hour from the issued time
+        $expirationTime = $issuedAt + JWT_EXPIRY;  
         $payload = array(
             'iat' => $issuedAt,
             'exp' => $expirationTime,
