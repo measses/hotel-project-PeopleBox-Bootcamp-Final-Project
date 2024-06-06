@@ -1,5 +1,9 @@
 <?php
 include '../auth/session/start_session.php';
+include '../../config/config.php'; // JWT Config dosyasını dahil edelim
+require '../../vendor/autoload.php'; // JWT kütüphanesini dahil edelim
+
+use \Firebase\JWT\JWT;
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -22,12 +26,23 @@ if (isset($data["username"]) && isset($data["password"])) {
     
     $result = $user->login($username, $password);
     if ($result) {
-        $_SESSION["loggedin"] = true;
-        $_SESSION["user_id"] = $result['id'];
-        $_SESSION["username"] = $result['username'];
-        $_SESSION["user_type"] = $result['user_type'];
+        $issuedAt = time();
+        $expirationTime = $issuedAt + JWT_EXPIRY;  // jwt valid for 1 hour from the issued time
+        $payload = array(
+            'iat' => $issuedAt,
+            'exp' => $expirationTime,
+            'userId' => $result['id'],
+            'userType' => $result['user_type']
+        );
 
-        echo json_encode(['success' => true, 'message' => 'Login successful', 'user' => $result]);
+        $jwt = JWT::encode($payload, JWT_SECRET, JWT_ALGORITHM);
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Login successful',
+            'token' => $jwt,
+            'user' => $result
+        ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Invalid username or password']);
     }

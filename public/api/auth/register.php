@@ -18,6 +18,7 @@ $username = $data['username'];
 $email = $data['email'];
 $password = $data['password'];
 $confirm_password = $data['confirm_password'];
+$user_type = $data['user_type'] ?? 'user'; // Default to 'user' if not provided
 
 if ($password !== $confirm_password) {
     echo json_encode(['success' => false, 'message' => 'Parolalar eşleşmiyor']);
@@ -25,8 +26,7 @@ if ($password !== $confirm_password) {
 }
 
 try {
-    $result = $user->register($username, $email, $password);
-
+    $result = $user->register($username, $email, $password, $user_type);
     if ($result) {
         echo json_encode(['success' => true, 'message' => 'Kullanıcı başarıyla kaydedildi']);
     } else {

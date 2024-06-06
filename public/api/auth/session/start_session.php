@@ -1,6 +1,6 @@
 <?php
-
-$session_lifetime = 7 * 24 * 60 * 60; // 7 gün 
+// Oturum ayarları
+$session_lifetime = 7 * 24 * 60 * 60; // 7 gün
 
 session_set_cookie_params([
     'lifetime' => $session_lifetime,
@@ -11,5 +11,6 @@ session_set_cookie_params([
     'samesite' => 'Lax', 
 ]);
 
-session_start();
-?>
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
