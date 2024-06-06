@@ -17,5 +17,6 @@ $data = json_decode(file_get_contents("php://input"), true);
 if ($room->update($data['id'], $data)) {
     echo json_encode(['message' => 'Room Updated']);
 } else {
-    echo json_encode(['message' => 'Room Not Updated']);
+    echo json_encode(['message' => 'Room Not Updated', 'error' => 'Room number already exists or other error occurred']);
 }
+?>

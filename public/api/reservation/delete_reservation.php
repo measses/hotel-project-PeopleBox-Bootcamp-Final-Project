@@ -12,11 +12,14 @@ $database = new Database();
 $db = $database->connect();
 
 $reservation = new Reservation($db);
-$data = json_decode(file_get_contents("php://input"), true);
 
-if($reservation->delete($data['id'])) {
-    echo json_encode(['message' => 'Reservation Deleted']);
+$data = json_decode(file_get_contents("php://input"), true);
+$id = $data['id'];
+
+if ($reservation->delete($id)) {
+    echo json_encode(['success' => true, 'message' => 'Reservation Deleted']);
 } else {
-    echo json_encode(['message' => 'Reservation Not Deleted']);
+    $errorInfo = $reservation->getErrorInfo();
+    echo json_encode(['success' => false, 'message' => 'Reservation Not Deleted', 'error' => $errorInfo]);
 }
 ?>
