@@ -28,6 +28,7 @@ import {
   updateRevenue,
   deleteRevenue,
 } from "../redux/slices/revenueSlice";
+
 import {
   updateReservation,
   fetchReservations,
@@ -188,17 +189,6 @@ const FinancePage = () => {
       const values = await editForm.validateFields();
       editForm.resetFields();
       setIsEditModalOpen(false);
-
-      const updatedReservation = {
-        ...editingReservation,
-        ...values,
-        checkin_date: values.checkin_date.format("YYYY-MM-DD"),
-        checkout_date: values.checkout_date.format("YYYY-MM-DD"),
-      };
-
-      dispatch(updateReservation(updatedReservation))
-        .then(() => dispatch(fetchReservations()))
-        .then(() => message.success("Rezervasyon başarıyla güncellendi!"));
     } catch (error) {
       console.error("Validate Failed:", error);
     }

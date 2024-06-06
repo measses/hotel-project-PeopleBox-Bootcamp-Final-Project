@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const API_URL =
@@ -28,7 +28,7 @@ export const updateRoom = createAsyncThunk("rooms/updateRoom", async (room) => {
 });
 
 export const deleteRoom = createAsyncThunk("rooms/deleteRoom", async (id) => {
-  await axios.delete(`${API_URL}/delete_room.php`, {
+  const response = await axios.delete(`${API_URL}/delete_room.php`, {
     data: { id },
     headers: {
       "Content-Type": "application/json",
@@ -41,22 +41,19 @@ const roomsSlice = createSlice({
   name: "rooms",
   initialState: {
     rooms: [],
-    status: "idle",
-    error: null,
+    status: null,
   },
-  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchRooms.pending, (state) => {
         state.status = "loading";
       })
       .addCase(fetchRooms.fulfilled, (state, action) => {
-        state.status = "succeeded";
         state.rooms = action.payload;
+        state.status = "success";
       })
-      .addCase(fetchRooms.rejected, (state, action) => {
+      .addCase(fetchRooms.rejected, (state) => {
         state.status = "failed";
-        state.error = action.error.message;
       })
       .addCase(addRoom.fulfilled, (state, action) => {
         state.rooms.push(action.payload);
