@@ -10,11 +10,14 @@ class User {
     public $password;
     public $user_type;
     public $profile_picture;
+    public $verification_code;
 
 
     public function __construct($db) {
         $this->conn = $db;
     }
+
+   
 
     public function register($username, $email, $password, $user_type = 'user') {
         if ($this->usernameExists($username)) {
@@ -52,6 +55,44 @@ class User {
 
         return $result;
     }
+
+    public function saveVerificationCode($email, $code) {
+        $query = "UPDATE " . $this->table . " SET verification_code = :code WHERE email = :email";
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(':code', $code);
+        $stmt->bindParam(':email', $email);
+
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            throw new Exception('Doğrulama kodu kaydedilemedi. Hata: ' . $e->getMessage());
+        }
+    }
+
+    public function verifyEmail($email, $code) {
+        $query = "SELECT * FROM " . $this->table . " WHERE verification_code = :code AND email = :email";
+        $stmt = $this->conn->prepare($query);
+    
+        $stmt->bindParam(':code', $code);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+    
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($user) {
+            $query = "UPDATE " . $this->table . " SET verification_code = NULL, email_verified_at = NOW() WHERE verification_code = :code AND email = :email";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':code', $code);
+            $stmt->bindParam(':email', $email);
+            return $stmt->execute();
+        }
+    
+        return false;
+    }
+    
+    
 
     public function login($username, $password) {
         $query = "SELECT * FROM " . $this->table . " WHERE username = :username";
@@ -117,10 +158,6 @@ class User {
     
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    
-    
-    
-    
     
 
     public function usernameExists($username) {
