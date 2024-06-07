@@ -39,11 +39,24 @@ class Room extends BaseCrud {
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $existingRoom = $stmt->fetch(PDO::FETCH_ASSOC);
-
+    
         if ($existingRoom) {
-            return false; // Oda numarası zaten mevcut
+            return ['success' => false, 'error' => 'Room number already exists'];
         }
-
+    
+        // Rezervasyon kontrolü
+        if (isset($data['status']) && $data['status'] === 'Available') {
+            $reservationQuery = 'SELECT * FROM reservations WHERE room_id = :room_id AND status = "confirmed" AND checkout_date > NOW()';
+            $reservationStmt = $this->connection->prepare($reservationQuery);
+            $reservationStmt->bindParam(':room_id', $id, PDO::PARAM_INT);
+            $reservationStmt->execute();
+            $activeReservation = $reservationStmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($activeReservation) {
+                return ['success' => false, 'error' => 'Room cannot be marked as available, it has active reservations'];
+            }
+        }
+    
         $set = "";
         foreach ($data as $key => $value) {
             $set .= $key . " = :" . $key . ", ";
@@ -55,8 +68,12 @@ class Room extends BaseCrud {
         foreach ($data as $key => $value) {
             $stmt->bindValue(':' . $key, $value);
         }
-        return $stmt->execute();
+        $result = $stmt->execute();
+    
+        return ['success' => $result, 'error' => $result ? null : 'An error occurred while updating the room'];
     }
+    
+    
 
     public function create($data) {
         // Oda numarası kontrolü
@@ -81,10 +98,36 @@ class Room extends BaseCrud {
     }
 
     public function delete($id) {
-        $query = 'UPDATE ' . $this->table . ' SET deleted_at = NOW() WHERE id = :id';
+        // Check if the room has active reservations
+        $query = 'SELECT COUNT(*) as count FROM reservations WHERE room_id = :room_id AND status = "confirmed"';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindParam(':room_id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($result && $result['count'] > 0) {
+            return ['success' => false, 'message' => 'Room has active reservations'];
+        }
+    
+        $query = 'UPDATE rooms SET deleted_at = NOW() WHERE id = :id';
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        return $stmt->execute();
+        $success = $stmt->execute();
+    
+        return ['success' => $success, 'message' => $success ? 'Room Deleted' : 'Room Not Deleted'];
     }
+    
+    
+    
+    public function getRoomNumberById($room_id) {
+        $query = 'SELECT room_number FROM ' . $this->table . ' WHERE id = :room_id';
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindParam(':room_id', $room_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['room_number'];
+    }
+    
+    
 }
 ?>

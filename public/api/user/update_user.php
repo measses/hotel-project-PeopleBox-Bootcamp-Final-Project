@@ -29,12 +29,20 @@ $profile_picture = null;
 if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
     $upload_dir = '../../uploads/';
     $file_name = basename($_FILES['profile_picture']['name']);
-    $target_file = $upload_dir . $file_name;
-    
-    if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $target_file)) {
-        $profile_picture = $file_name; // dosya adını kaydet
+    $file_type = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+    $allowed_types = ['jpg', 'jpeg', 'png'];
+    if (in_array($file_type, $allowed_types)) {
+        $target_file = $upload_dir . $file_name;
+
+        if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $target_file)) {
+            $profile_picture = $file_name; // dosya adını kaydet
+        } else {
+            echo json_encode(['success' => false, 'message' => 'File upload failed']);
+            return;
+        }
     } else {
-        echo json_encode(['success' => false, 'message' => 'File upload failed']);
+        echo json_encode(['success' => false, 'message' => 'Invalid file type']);
         return;
     }
 }
@@ -51,4 +59,5 @@ try {
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
+
 ?>
