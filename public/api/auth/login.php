@@ -26,6 +26,9 @@ if (isset($data["username"]) && isset($data["password"])) {
     
     $result = $user->login($username, $password);
     if ($result) {
+
+        unset($result['password']);
+        
         $issuedAt = time();
         $expirationTime = $issuedAt + JWT_EXPIRY;  
         $payload = array(
@@ -41,7 +44,7 @@ if (isset($data["username"]) && isset($data["password"])) {
             'success' => true,
             'message' => 'Login successful',
             'token' => $jwt,
-            'user' => $result
+            'user' => $result 
         ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Invalid username or password']);
