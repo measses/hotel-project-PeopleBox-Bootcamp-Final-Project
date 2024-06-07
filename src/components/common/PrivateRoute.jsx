@@ -1,11 +1,21 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
-const PrivateRoute = ({ children }) => {
-  const { user } = useSelector((state) => state.auth);
+const PrivateRoute = ({
+  children,
+  isAuthenticated,
+  userType,
+  allowedTypes,
+}) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
 
-  return user ? children : <Navigate to="/login" />; //kullanıcı varsa children'ı render et, yoksa login sayfasına yönlendir
+  if (allowedTypes && !allowedTypes.includes(userType)) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
 };
 
 export default PrivateRoute;

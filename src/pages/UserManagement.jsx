@@ -5,7 +5,6 @@ const UserManagement = () => {
   return (
     <div>
       <Users />
-      {/* Buraya ek yönetim işlevleri ekleyebilirsiniz */}
     </div>
   );
 };

@@ -11,14 +11,16 @@ import {
   FaBed,
   FaCalendarCheck,
   FaMoneyBillWave,
+  FaClipboardList,
 } from "react-icons/fa";
 
-const Navbar = () => {
+const Navbar = ({ isAuthenticated }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
-  const handleLogout = async () => {
+  const handleLogout = async (e) => {
+    e.preventDefault();
     try {
       await dispatch(logout()).unwrap();
       navigate("/login");
@@ -77,53 +79,58 @@ const Navbar = () => {
                   alt="Workflow"
                 />
               </div>
-              <div className="hidden sm:ml-6 sm:block">
-                <div className="flex space-x-4">
-                  <Link
-                    to="/"
-                    className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
-                    aria-current="page"
-                  >
-                    <FaHome className="mr-2" /> Anasayfa
-                  </Link>
-
-                  {user?.user_type === "admin" && (
+              {isAuthenticated && (
+                <div className="hidden sm:ml-6 sm:block">
+                  <div className="flex space-x-4">
                     <Link
-                      to="/finance"
+                      to="/"
+                      className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                      aria-current="page"
+                    >
+                      <FaHome className="mr-2" /> Anasayfa
+                    </Link>
+
+                    {user?.user_type === "admin" && (
+                      <Link
+                        to="/finance"
+                        className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                      >
+                        <FaMoneyBillWave className="mr-2" /> Gelir-Gider
+                        Yönetimi
+                      </Link>
+                    )}
+                    <Link
+                      to="/rooms"
                       className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
                     >
-                      <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
+                      <FaBed className="mr-2" /> Odaların Durumu
                     </Link>
-                  )}
-                  {user && (
-                    <>
+                    <Link
+                      to="/reservations"
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                    >
+                      <FaCalendarCheck className="mr-2" /> Rezervasyonlar
+                    </Link>
+                    <Link
+                      to="/todos"
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                    >
+                      <FaClipboardList className="mr-2" /> Görevler
+                    </Link>
+                    {user?.user_type === "admin" && (
                       <Link
-                        to="/rooms"
+                        to="/user-management"
                         className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
                       >
-                        <FaBed className="mr-2" /> Odaların Durumu
+                        <FaUserCog className="mr-2" /> Kullanıcı Yönetimi
                       </Link>
-                      <Link
-                        to="/reservations"
-                        className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
-                      >
-                        <FaCalendarCheck className="mr-2" /> Rezervasyonlar
-                      </Link>
-                      {user.user_type === "admin" && (
-                        <Link
-                          to="/user-management"
-                          className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
-                        >
-                          <FaUserCog className="mr-2" /> Kullanıcı Yönetimi
-                        </Link>
-                      )}
-                    </>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              {user ? (
+              {isAuthenticated ? (
                 <>
                   <Link
                     to="/profile"
@@ -158,65 +165,53 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="sm:hidden" id="mobile-menu">
-          <div className="space-y-1 px-2 pb-3 pt-2">
-            <Link
-              to="/"
-              className="bg-gray-900 text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
-              aria-current="page"
-            >
-              <FaHome className="mr-2" /> Anasayfa
-            </Link>
-            {user?.user_type === "admin" && (
+        {isAuthenticated && (
+          <div className="sm:hidden" id="mobile-menu">
+            <div className="space-y-1 px-2 pb-3 pt-2">
               <Link
-                to="/finance"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
+                to="/"
+                className="bg-gray-900 text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
+                aria-current="page"
               >
-                <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
+                <FaHome className="mr-2" /> Anasayfa
               </Link>
-            )}
-            {user && (
-              <>
+              {user?.user_type === "admin" && (
                 <Link
-                  to="/rooms"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
+                  to="/finance"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
                 >
-                  <FaBed className="mr-2" /> Odaların Durumu
+                  <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
                 </Link>
+              )}
+              <Link
+                to="/rooms"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
+              >
+                <FaBed className="mr-2" /> Odaların Durumu
+              </Link>
+              <Link
+                to="/reservations"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
+              >
+                <FaCalendarCheck className="mr-2" /> Rezervasyonlar
+              </Link>
+              <Link
+                to="/todos"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
+              >
+                <FaClipboardList className="mr-2" /> Görevler
+              </Link>
+              {user?.user_type === "admin" && (
                 <Link
-                  to="/reservations"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
+                  to="/user-management"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
                 >
-                  <FaCalendarCheck className="mr-2" /> Rezervasyonlar
+                  <FaUserCog className="mr-2" /> Kullanıcı Yönetimi
                 </Link>
-                {user.user_type === "admin" && (
-                  <Link
-                    to="/user-management"
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
-                  >
-                    <FaUserCog className="mr-2" /> Kullanıcı Yönetimi
-                  </Link>
-                )}
-              </>
-            )}
-            {!user && (
-              <>
-                <Link
-                  to="/login"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
-                >
-                  <FaSignInAlt className="mr-2" /> Giriş Yap
-                </Link>
-                <Link
-                  to="/register"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white  rounded-md px-3 py-2 text-base font-medium flex items-center"
-                >
-                  <FaUserPlus className="mr-2" /> Kayıt Ol
-                </Link>
-              </>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </nav>
     </div>
   );

@@ -1,5 +1,6 @@
-import React from "react";
-import TodoItem from "./TodoItem";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTodos } from "../../redux/slices/todoSlice";
 import {
   Card,
   CardBody,
@@ -8,13 +9,17 @@ import {
 } from "@material-tailwind/react";
 import { FaClipboardList } from "react-icons/fa";
 
-const todos = [
-  { task: "Oda temizliği kontrolü", dueDate: "Bugün" },
-  { task: "Yeni rezervasyonları onayla", dueDate: "Yarın" },
-  { task: "Müşteri geri bildirimlerini değerlendir", dueDate: "Bu Hafta" },
-];
-
 const TodoList = () => {
+  const dispatch = useDispatch();
+  const { todos, loading, error } = useSelector((state) => state.todos);
+
+  useEffect(() => {
+    dispatch(fetchTodos());
+  }, [dispatch]);
+
+  // İlk 5 görevi almak için dilimleme işlemi
+  const displayedTodos = todos.slice(0, 5);
+
   return (
     <Card className="mb-8">
       <CardHeader
@@ -33,8 +38,20 @@ const TodoList = () => {
         </div>
       </CardHeader>
       <CardBody className="grid grid-cols-1 gap-4 mt-5">
-        {todos.map((item, index) => (
-          <TodoItem key={index} item={item} />
+        {loading && <Typography>Yükleniyor...</Typography>}
+        {error && <Typography color="red">{error}</Typography>}
+        {displayedTodos.map((item) => (
+          <div
+            key={item.id}
+            className="p-2 flex items-center justify-between border-b border-gray-200"
+          >
+            <Typography variant="small" color="blue-gray">
+              {item.title}
+            </Typography>
+            <Typography variant="small" color="gray">
+              {item.dueDate}
+            </Typography>
+          </div>
         ))}
       </CardBody>
     </Card>

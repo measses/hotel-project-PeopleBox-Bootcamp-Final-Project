@@ -2,11 +2,15 @@ import React from "react";
 import { Card, CardBody, Typography } from "@material-tailwind/react";
 
 const UserCard = ({ user }) => {
+  const avatarUrl = user.profile_picture
+    ? `http://localhost/hotel-project-PeopleBox-Bootcamp-Final-Project/public/uploads/${user.profile_picture}`
+    : `https://ui-avatars.com/api/?name=${user.username}&background=random`;
+
   return (
     <Card className="mb-4">
       <CardBody className="flex flex-col items-center justify-center p-4">
         <img
-          src={`https://ui-avatars.com/api/?name=${user.username}&background=random`}
+          src={avatarUrl}
           alt={`${user.username}`}
           className="w-20 h-20 rounded-full mb-4"
         />

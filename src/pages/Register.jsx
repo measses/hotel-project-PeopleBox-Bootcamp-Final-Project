@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Input, Button, Card, Typography, message, Modal } from "antd";
 import { register } from "../redux/slices/authSlice";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
@@ -11,6 +12,9 @@ const Register = () => {
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
   const [form] = Form.useForm();
+  const [verifyForm] = Form.useForm();
+  const [isVerifyModalVisible, setIsVerifyModalVisible] = useState(false);
+  const [email, setEmail] = useState("");
 
   const showModal = (title, content) => {
     Modal.error({
@@ -23,13 +27,39 @@ const Register = () => {
     try {
       const result = await dispatch(register(values)).unwrap();
       if (result.success) {
-        message.success("Registration successful");
-        navigate("/login");
+        message.success(
+          "Registration successful. Please check your email to verify your account."
+        );
+        setEmail(values.email);
+        setIsVerifyModalVisible(true);
       } else {
         showModal("Registration Error", result.message);
       }
     } catch (err) {
       showModal("Registration Error", err.message);
+    }
+  };
+
+  const handleVerify = async (values) => {
+    try {
+      const response = await axios.post(
+        "http://localhost/hotel-project-PeopleBox-Bootcamp-Final-Project/public/api/auth/verify.php",
+        { code: values.code, email },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.success) {
+        message.success("Email successfully verified!");
+        setIsVerifyModalVisible(false);
+        navigate("/login");
+      } else {
+        showModal("Verification Error", response.data.message);
+      }
+    } catch (err) {
+      showModal("Verification Error", err.message);
     }
   };
 
@@ -96,6 +126,30 @@ const Register = () => {
           Already have an account? <Link to="/login">Login</Link>
         </div>
       </Card>
+
+      <Modal
+        title="Verify Email"
+        visible={isVerifyModalVisible}
+        onCancel={() => setIsVerifyModalVisible(false)}
+        footer={null}
+      >
+        <Form form={verifyForm} onFinish={handleVerify} layout="vertical">
+          <Form.Item
+            label="Verification Code"
+            name="code"
+            rules={[
+              { required: true, message: "Please enter the verification code" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading} block>
+              Verify
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
