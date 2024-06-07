@@ -19,16 +19,26 @@ $revenue = new Revenue($db);
 
 $data = json_decode(file_get_contents("php://input"), true);
 
+// Gelen JSON verilerini loglayın
+error_log('Received Data: ' . print_r($data, true));
+
 if (isset($data['room_number'])) {
     $room_data = $room->getByRoomNumber($data['room_number']);
     if ($room_data) {
         $data['room_id'] = $room_data['id'];
         $room_number = $data['room_number']; // Store room number
         $daily_price = $room_data['price'];
+        
+        // Tarihleri doğru bir şekilde alalım ve hesaplamaları kontrol edelim
         $checkin_date = new DateTime($data['checkin_date']);
         $checkout_date = new DateTime($data['checkout_date']);
         $interval = $checkin_date->diff($checkout_date);
         $days = $interval->days;
+
+        // Günlük fiyat ve gün sayısını loglayın
+        error_log('Daily Price: ' . $daily_price);
+        error_log('Days: ' . $days);
+
         $data['total_price'] = $daily_price * $days;
 
         if (!$reservation->isRoomAvailable($data['room_id'], $data['checkin_date'], $data['checkout_date'])) {

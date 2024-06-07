@@ -11,15 +11,15 @@ function sendVerificationEmail($email, $code) {
     try {
         //Server settings
         $mail->isSMTP();
-        $mail->Host = 'mail.example.com'; 
+        $mail->Host = 'mail.buukalemun.com'; 
         $mail->SMTPAuth = true;
-        $mail->Username = 'info@example.com'; 
-        $mail->Password = 'password_key'; 
+        $mail->Username = 'info@buukalemun.com'; 
+        $mail->Password = 'CDcPKDHrF-jCMJ!';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = 465;
 
         //Recipients
-        $mail->setFrom('info@example.com', 'Measses Otel'); 
+        $mail->setFrom('info@buukalemun.com', 'Measses '); 
         $mail->addAddress($email);
 
         //Content

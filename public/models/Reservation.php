@@ -4,7 +4,7 @@ include_once '../../core/Model.php';
 include_once 'Revenue.php';  // Revenue modelini dahil ediyoruz
 
 class Reservation extends BaseCrud {
-    // Properties
+    // Özellikler
     public $id;
     public $room_id;
     public $guest_name;
@@ -45,6 +45,14 @@ class Reservation extends BaseCrud {
         $current_date = new DateTime();
         $checkin_date = new DateTime($checkin_date);
         $checkout_date = new DateTime($checkout_date);
+
+        // Hata ayıklama: Kontrol edilen tarihleri loglayın
+        error_log("Current Date: " . $current_date->format('Y-m-d H:i:s'));
+        error_log("Check-in Date: " . $checkin_date->format('Y-m-d H:i:s'));
+        error_log("Check-out Date: " . $checkout_date->format('Y-m-d H:i:s'));
+        error_log("Check-in >= Current: " . ($checkin_date >= $current_date ? 'true' : 'false'));
+        error_log("Check-out > Check-in: " . ($checkout_date > $checkin_date ? 'true' : 'false'));
+
         return $checkin_date >= $current_date && $checkout_date > $checkin_date;
     }
 
@@ -59,9 +67,14 @@ class Reservation extends BaseCrud {
                 $checkout_date = new DateTime($data['checkout_date']);
                 $interval = $checkin_date->diff($checkout_date);
                 $days = $interval->days;
+
+                // Günlük fiyat ve gün sayısını loglayın
+                error_log('Daily Price: ' . $daily_price);
+                error_log('Days: ' . $days);
+
                 $data['total_price'] = $daily_price * $days;
             } else {
-                return false; // Oda bulunamadı
+                return ['success' => false, 'message' => 'Room not found']; // Oda bulunamadı
             }
             unset($data['room_number']);
         }

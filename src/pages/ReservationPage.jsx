@@ -352,7 +352,7 @@ const ReservationPage = () => {
                   { required: false, message: "Lütfen toplam fiyatı girin!" },
                 ]}
               >
-                <Input type="number" disabled />
+                <Input type="number" />
               </Form.Item>
             </Col>
           </Row>
