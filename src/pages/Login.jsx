@@ -40,7 +40,7 @@ const Login = () => {
     >
       <Card>
         <Title level={2} style={{ textAlign: "center" }}>
-          Login
+          Giriş Yap
         </Title>
         <Form form={form} onFinish={handleLogin} layout="vertical">
           <Form.Item

@@ -99,4 +99,28 @@ const reservationsSlice = createSlice({
   },
 });
 
+export const selectCheckinCheckoutData = (state) => {
+  const reservations = state.reservations.reservations;
+  const checkinData = Array(7).fill(0);
+  const checkoutData = Array(7).fill(0);
+  const daysOfWeek = ["Paz", "Pts", "Sal", "Çar", "Per", "Cum", "Cmt"];
+
+  reservations.forEach((reservation) => {
+    const checkinDate = new Date(reservation.checkin_date);
+    const checkoutDate = new Date(reservation.checkout_date);
+
+    const checkinDay = checkinDate.getDay();
+    const checkoutDay = checkoutDate.getDay();
+
+    checkinData[checkinDay]++;
+    checkoutData[checkoutDay]++;
+  });
+
+  return {
+    checkinData,
+    checkoutData,
+    categories: daysOfWeek,
+  };
+};
+
 export default reservationsSlice.reducer;

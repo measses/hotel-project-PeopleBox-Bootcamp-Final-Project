@@ -18,14 +18,25 @@ export const addRoom = createAsyncThunk("rooms/addRoom", async (room) => {
   return response.data;
 });
 
-export const updateRoom = createAsyncThunk("rooms/updateRoom", async (room) => {
-  const response = await axios.put(`${API_URL}/update_room.php`, room, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-});
+export const updateRoom = createAsyncThunk(
+  "rooms/updateRoom",
+  async (room, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`${API_URL}/update_room.php`, room, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue({ message: "Network Error" });
+      }
+    }
+  }
+);
 
 export const deleteRoom = createAsyncThunk("rooms/deleteRoom", async (id) => {
   const response = await axios.delete(`${API_URL}/delete_room.php`, {

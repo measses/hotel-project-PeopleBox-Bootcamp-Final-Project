@@ -62,7 +62,7 @@ const TodoList = () => {
         message.success("Görev başarıyla eklendi!");
         setIsModalOpen(false);
         form.resetFields();
-        dispatch(fetchTodos()); // Fetch updated list of todos
+        dispatch(fetchTodos());
       } else {
         message.error(result.message || "Görev eklenemedi.");
       }
@@ -87,7 +87,7 @@ const TodoList = () => {
         message.success("Görev başarıyla güncellendi!");
         setIsEditModalOpen(false);
         editForm.resetFields();
-        dispatch(fetchTodos()); // Fetch updated list of todos
+        dispatch(fetchTodos());
       } else {
         message.error(result.message || "Görev güncellenemedi.");
       }
@@ -122,7 +122,7 @@ const TodoList = () => {
     try {
       await dispatch(deleteTodo(id)).unwrap();
       message.success("Görev başarıyla silindi");
-      dispatch(fetchTodos()); // Fetch updated list of todos
+      dispatch(fetchTodos());
     } catch (error) {
       message.error("Görev silinemedi");
     }

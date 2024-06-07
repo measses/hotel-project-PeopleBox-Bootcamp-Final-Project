@@ -8,8 +8,6 @@ import TodoList from "../components/Home/TodoList";
 import Footer from "../components/common/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRooms } from "../redux/slices/roomsSlice";
-import { fetchExpenses } from "../redux/slices/expenseSlice";
-import { fetchRevenue } from "../redux/slices/revenueSlice";
 
 const Home = () => {
   const dispatch = useDispatch();

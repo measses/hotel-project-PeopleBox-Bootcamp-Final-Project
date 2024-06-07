@@ -310,17 +310,17 @@ const FinancePage = () => {
                 <Select>
                   {activeTable === "income" ? (
                     <>
-                      <Option value="room_rent">Oda Kiralama</Option>
-                      <Option value="services">Hizmetler</Option>
-                      <Option value="other">Diğer</Option>
+                      <Option value="Oda Kiralama">Oda Kiralama</Option>
+                      <Option value="Servis">Hizmetler</Option>
+                      <Option value="Diğer">Diğer</Option>
                     </>
                   ) : (
                     <>
-                      <Option value="salary">Maaş</Option>
-                      <Option value="maintenance">Bakım</Option>
-                      <Option value="utilities">Faturalar</Option>
-                      <Option value="supplies">Malzemeler</Option>
-                      <Option value="other">Diğer</Option>
+                      <Option value="Maaş">Maaş</Option>
+                      <Option value="Bakım">Bakım</Option>
+                      <Option value="Fatura">Faturalar</Option>
+                      <Option value="Malzeme">Malzemeler</Option>
+                      <Option value="Diğer">Diğer</Option>
                     </>
                   )}
                 </Select>
@@ -390,17 +390,17 @@ const FinancePage = () => {
                 <Select>
                   {activeTable === "income" ? (
                     <>
-                      <Option value="room_rent">Oda Kiralama</Option>
-                      <Option value="services">Hizmetler</Option>
-                      <Option value="other">Diğer</Option>
+                      <Option value="Oda Kiralama">Oda Kiralama</Option>
+                      <Option value="Servis">Hizmetler</Option>
+                      <Option value="Diğer">Diğer</Option>
                     </>
                   ) : (
                     <>
-                      <Option value="salary">Maaş</Option>
-                      <Option value="maintenance">Bakım</Option>
-                      <Option value="utilities">Faturalar</Option>
-                      <Option value="supplies">Malzemeler</Option>
-                      <Option value="other">Diğer</Option>
+                      <Option value="Maaş">Maaş</Option>
+                      <Option value="Bakım">Bakım</Option>
+                      <Option value="Fatura">Faturalar</Option>
+                      <Option value="Malzeme">Malzemeler</Option>
+                      <Option value="Diğer">Diğer</Option>
                     </>
                   )}
                 </Select>

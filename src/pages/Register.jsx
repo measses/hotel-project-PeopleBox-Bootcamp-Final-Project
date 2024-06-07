@@ -70,7 +70,7 @@ const Register = () => {
     >
       <Card>
         <Title level={2} style={{ textAlign: "center" }}>
-          Register
+          Kayıt Ol
         </Title>
         <Form form={form} onFinish={handleRegister} layout="vertical">
           <Form.Item

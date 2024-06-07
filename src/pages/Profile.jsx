@@ -45,9 +45,9 @@ const Profile = () => {
       const result = await dispatch(updateProfile(formData)).unwrap();
       if (result.success) {
         message.success("Profile updated successfully");
-        // Kullanıcı güncellemelerinden sonra kullanıcıları yeniden fetch et
+
         dispatch(fetchUsers());
-        // auth slice'daki kullanıcı verilerini de güncelle
+
         dispatch({
           type: "auth/updateProfile/fulfilled",
           payload: { user: result.user },
@@ -67,7 +67,16 @@ const Profile = () => {
     return e && e.fileList;
   };
 
-  const handleChange = ({ fileList }) => setFileList(fileList);
+  const handleChange = ({ fileList }) => {
+    // Dosya türü kontrolü
+    const isJpgOrPng =
+      fileList[0]?.type === "image/jpeg" || fileList[0]?.type === "image/png";
+    if (!isJpgOrPng) {
+      message.error("You can only upload JPG/PNG file!");
+      return;
+    }
+    setFileList(fileList);
+  };
 
   return (
     <div

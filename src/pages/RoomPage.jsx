@@ -60,9 +60,14 @@ const RoomPage = () => {
   }, [rooms, reservations, dispatch]);
 
   const handleDelete = (id) => {
-    dispatch(deleteRoom(id))
-      .then(() => dispatch(fetchRooms()))
-      .then(() => message.success("Oda başarıyla silindi!"));
+    dispatch(deleteRoom(id)).then((result) => {
+      if (result.payload.success) {
+        dispatch(fetchRooms());
+        message.success("Oda başarıyla silindi!");
+      } else {
+        message.error(result.payload.message || "Oda silinemedi.");
+      }
+    });
   };
 
   const handleEdit = (record) => {
@@ -107,19 +112,23 @@ const RoomPage = () => {
       };
       const result = await dispatch(updateRoom(updatedRoom)).unwrap();
 
-      if (result.message === "Room Updated") {
+      if (result.message === "Oda Güncellendi") {
         dispatch(fetchRooms());
         message.success("Oda başarıyla güncellendi!");
-      } else if (
-        result.error === "Room number already exists or other error occurred"
-      ) {
+      } else if (result.error === "Room number already exists") {
         message.error("Oda numarası zaten mevcut veya başka bir hata oluştu!");
+      } else if (
+        result.error === "Rezervasyon olan oda boş olarak gösterilemez!"
+      ) {
+        message.error("Rezervasyon olan oda boş olarak gösterilemez!");
       } else {
         message.error("Oda güncellenemedi.");
       }
     } catch (error) {
       console.error("Validate Failed:", error);
-      message.error("Oda güncellenemedi.");
+      message.error(
+        "Oda güncellenemedi. Dolu odayı güncelliyor olabilirsiniz!"
+      );
     }
   };
 

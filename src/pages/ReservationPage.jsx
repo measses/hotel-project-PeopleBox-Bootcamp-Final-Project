@@ -349,10 +349,10 @@ const ReservationPage = () => {
                 name="total_price"
                 label="Toplam Fiyat"
                 rules={[
-                  { required: true, message: "Lütfen toplam fiyatı girin!" },
+                  { required: false, message: "Lütfen toplam fiyatı girin!" },
                 ]}
               >
-                <Input type="number" />
+                <Input type="number" disabled />
               </Form.Item>
             </Col>
           </Row>
