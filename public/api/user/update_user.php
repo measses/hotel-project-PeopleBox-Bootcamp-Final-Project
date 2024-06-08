@@ -33,10 +33,12 @@ if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ===
 
     $allowed_types = ['jpg', 'jpeg', 'png'];
     if (in_array($file_type, $allowed_types)) {
-        $target_file = $upload_dir . $file_name;
+        // Dosya ismini hashleyerek eşsiz hale getirelim
+        $hashed_file_name = md5(time() . $file_name) . '.' . $file_type;
+        $target_file = $upload_dir . $hashed_file_name;
 
         if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $target_file)) {
-            $profile_picture = $file_name; // dosya adını kaydet
+            $profile_picture = $hashed_file_name; // hashlenmiş dosya adını kaydet
         } else {
             echo json_encode(['success' => false, 'message' => 'File upload failed']);
             return;

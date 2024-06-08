@@ -151,7 +151,7 @@ const RoomPage = () => {
       title: "Oda Numarası",
       dataIndex: "room_number",
       key: "room_number",
-      sorter: (a, b) => a.room_number.localeCompare(b.room_number), // Sıralama işlevi eklendi
+      sorter: (a, b) => a.room_number.localeCompare(b.room_number),
     },
     {
       title: "Oda Tipi",
@@ -162,7 +162,7 @@ const RoomPage = () => {
       title: "Durum",
       dataIndex: "status",
       key: "status",
-      sorter: (a, b) => a.status.localeCompare(b.status), // Sıralama işlevi eklendi
+      sorter: (a, b) => a.status.localeCompare(b.status),
       render: (status) => {
         let color = "green";
         if (status === "Occupied") color = "volcano";
@@ -176,13 +176,13 @@ const RoomPage = () => {
       title: "Temizlik Durumu",
       dataIndex: "cleaning_status",
       key: "cleaning_status",
-      sorter: (a, b) => a.cleaning_status.localeCompare(b.cleaning_status), // Sıralama işlevi eklendi
+      sorter: (a, b) => a.cleaning_status.localeCompare(b.cleaning_status),
     },
     {
       title: "Fiyat",
       dataIndex: "price",
       key: "price",
-      sorter: (a, b) => a.price - b.price, // Sıralama işlevi eklendi
+      sorter: (a, b) => a.price - b.price,
       render: (price) => `$${Number(price).toFixed(2)}`,
     },
     {
