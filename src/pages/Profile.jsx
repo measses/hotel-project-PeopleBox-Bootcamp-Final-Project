@@ -44,7 +44,7 @@ const Profile = () => {
     try {
       const result = await dispatch(updateProfile(formData)).unwrap();
       if (result.success) {
-        message.success("Profile updated successfully");
+        message.success("Profil başarıyla güncellendi");
 
         dispatch(fetchUsers());
 
@@ -56,7 +56,7 @@ const Profile = () => {
         message.error(result.message);
       }
     } catch (err) {
-      message.error("Profile update failed");
+      message.error("Profi güncellenirken bir hata oluştu!");
     }
   };
 
@@ -72,7 +72,7 @@ const Profile = () => {
     const isJpgOrPng =
       fileList[0]?.type === "image/jpeg" || fileList[0]?.type === "image/png";
     if (!isJpgOrPng) {
-      message.error("You can only upload JPG/PNG file!");
+      message.error("Yalnızca JPG/PNG/JPEG dosyaları yüklenebilir!");
       return;
     }
     setFileList(fileList);

@@ -14,6 +14,23 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
   return response.data;
 });
 
+export const deleteUser = createAsyncThunk(
+  "users/deleteUser",
+  async (userId) => {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(
+      `${API_URL}/delete_user.php`,
+      { userId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  }
+);
+
 export const updateProfile = createAsyncThunk(
   "users/updateProfile",
   async (formData) => {

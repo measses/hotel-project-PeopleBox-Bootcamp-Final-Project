@@ -28,6 +28,7 @@ import "react-quill/dist/quill.snow.css";
 dayjs.extend(customParseFormat);
 
 const { Search } = Input;
+const { Title } = Typography;
 
 const TodoList = () => {
   const dispatch = useDispatch();
@@ -154,19 +155,19 @@ const TodoList = () => {
         <Space size="middle">
           <Button
             type="primary"
+            style={{ backgroundColor: "#FFA500", borderColor: "#FFA500" }}
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
           >
             Düzenle
           </Button>
           <Popconfirm
-            title="Silmek istediğinize emin misiniz?"
+            title="Bu rezervasyonu silmek istediğinize emin misiniz?"
             onConfirm={() => handleDelete(record.id)}
-            okText="Evet"
-            cancelText="Hayır"
           >
             <Button
-              type="danger"
+              type="primary"
+              danger
               style={{ backgroundColor: "#FF6347", borderColor: "#FF6347" }}
               icon={<DeleteOutlined />}
             >
@@ -181,6 +182,7 @@ const TodoList = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
+        <Title level={2}>Görev Listesi</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
           Görev Ekle
         </Button>

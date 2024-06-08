@@ -87,10 +87,10 @@ const RoomPage = () => {
       setIsModalOpen(false);
       const result = await dispatch(addRoom(values)).unwrap();
 
-      if (result.message === "Room Created") {
+      if (result.message === "Oda Eklendi") {
         dispatch(fetchRooms());
         message.success("Oda başarıyla eklendi!");
-      } else if (result.message === "Room Not Created") {
+      } else if (result.message === "Oda Eklenemedi") {
         message.error("Oda numarası zaten mevcut!");
       } else {
         message.error("Oda eklenemedi.");
@@ -112,17 +112,11 @@ const RoomPage = () => {
       };
       const result = await dispatch(updateRoom(updatedRoom)).unwrap();
 
-      if (result.message === "Oda Güncellendi") {
+      if (result.success) {
         dispatch(fetchRooms());
-        message.success("Oda başarıyla güncellendi!");
-      } else if (result.error === "Room number already exists") {
-        message.error("Oda numarası zaten mevcut veya başka bir hata oluştu!");
-      } else if (
-        result.error === "Rezervasyon olan oda boş olarak gösterilemez!"
-      ) {
-        message.error("Rezervasyon olan oda boş olarak gösterilemez!");
+        message.success(result.message || "Oda başarıyla güncellendi!");
       } else {
-        message.error("Oda güncellenemedi.");
+        message.error(result.error || "Oda güncellenemedi.");
       }
     } catch (error) {
       console.error("Validate Failed:", error);
@@ -157,6 +151,7 @@ const RoomPage = () => {
       title: "Oda Numarası",
       dataIndex: "room_number",
       key: "room_number",
+      sorter: (a, b) => a.room_number.localeCompare(b.room_number), // Sıralama işlevi eklendi
     },
     {
       title: "Oda Tipi",
@@ -167,6 +162,7 @@ const RoomPage = () => {
       title: "Durum",
       dataIndex: "status",
       key: "status",
+      sorter: (a, b) => a.status.localeCompare(b.status), // Sıralama işlevi eklendi
       render: (status) => {
         let color = "green";
         if (status === "Occupied") color = "volcano";
@@ -180,11 +176,13 @@ const RoomPage = () => {
       title: "Temizlik Durumu",
       dataIndex: "cleaning_status",
       key: "cleaning_status",
+      sorter: (a, b) => a.cleaning_status.localeCompare(b.cleaning_status), // Sıralama işlevi eklendi
     },
     {
       title: "Fiyat",
       dataIndex: "price",
       key: "price",
+      sorter: (a, b) => a.price - b.price, // Sıralama işlevi eklendi
       render: (price) => `$${Number(price).toFixed(2)}`,
     },
     {
@@ -275,10 +273,10 @@ const RoomPage = () => {
                 ]}
               >
                 <Select>
-                  <Option value="Single">Tek Kişilik</Option>
-                  <Option value="Double">Çift Kişilik</Option>
-                  <Option value="Suite">Süit</Option>
-                  <Option value="Other">Diğer</Option>
+                  <Option value="Tek">Tek Kişilik</Option>
+                  <Option value="Çift">Çift Kişilik</Option>
+                  <Option value="Süit">Süit</Option>
+                  <Option value="Diğer">Diğer</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -309,9 +307,9 @@ const RoomPage = () => {
                 ]}
               >
                 <Select>
-                  <Option value="Clean">Temiz</Option>
-                  <Option value="Dirty">Kirli</Option>
-                  <Option value="Other">Diğer</Option>
+                  <Option value="Temiz">Temiz</Option>
+                  <Option value="Kirli">Kirli</Option>
+                  <Option value="Diğer">Diğer</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -364,10 +362,10 @@ const RoomPage = () => {
                 ]}
               >
                 <Select>
-                  <Option value="Single">Tek Kişilik</Option>
-                  <Option value="Double">Çift Kişilik</Option>
-                  <Option value="Suite">Süit</Option>
-                  <Option value="Other">Diğer</Option>
+                  <Option value="Tek">Tek Kişilik</Option>
+                  <Option value="Çift">Çift Kişilik</Option>
+                  <Option value="Süit">Süit</Option>
+                  <Option value="Diğer">Diğer</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -398,9 +396,9 @@ const RoomPage = () => {
                 ]}
               >
                 <Select>
-                  <Option value="Clean">Temiz</Option>
-                  <Option value="Dirty">Kirli</Option>
-                  <Option value="Other">Diğer</Option>
+                  <Option value="Temiz">Temiz</Option>
+                  <Option value="Kirli">Kirli</Option>
+                  <Option value="Diğer">Diğer</Option>
                 </Select>
               </Form.Item>
             </Col>

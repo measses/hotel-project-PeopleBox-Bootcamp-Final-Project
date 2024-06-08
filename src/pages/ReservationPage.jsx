@@ -57,8 +57,8 @@ const ReservationPage = () => {
     setEditingReservation(record);
     editForm.setFieldsValue({
       ...record,
-      checkin_date: dayjs(record.checkin_date),
-      checkout_date: dayjs(record.checkout_date),
+      checkin_date: dayjs(record.checkin_date, "YYYY-MM-DD"),
+      checkout_date: dayjs(record.checkout_date, "YYYY-MM-DD"),
       room_number:
         rooms.find((room) => room.id === record.room_id)?.room_number ||
         record.room_number,
@@ -76,8 +76,8 @@ const ReservationPage = () => {
       const room = rooms.find(
         (room) => room.room_number === values.room_number
       );
-      const checkinDate = dayjs(values.checkin_date);
-      const checkoutDate = dayjs(values.checkout_date);
+      const checkinDate = dayjs(values.checkin_date, "DD/MM/YYYY");
+      const checkoutDate = dayjs(values.checkout_date, "DD/MM/YYYY");
       const totalDays = checkoutDate.diff(checkinDate, "day");
       const totalPrice = room.price * totalDays;
 
@@ -112,8 +112,8 @@ const ReservationPage = () => {
       const room = rooms.find(
         (room) => room.room_number === values.room_number
       );
-      const checkinDate = dayjs(values.checkin_date);
-      const checkoutDate = dayjs(values.checkout_date);
+      const checkinDate = dayjs(values.checkin_date, "DD/MM/YYYY");
+      const checkoutDate = dayjs(values.checkout_date, "DD/MM/YYYY");
       const totalDays = checkoutDate.diff(checkinDate, "day");
       const totalPrice = room.price * totalDays;
 
@@ -183,13 +183,13 @@ const ReservationPage = () => {
       title: "Giriş Tarihi",
       dataIndex: "checkin_date",
       key: "checkin_date",
-      render: (text) => dayjs(text).format("YYYY-MM-DD"),
+      render: (text) => dayjs(text).format("DD/MM/YYYY"),
     },
     {
       title: "Çıkış Tarihi",
       dataIndex: "checkout_date",
       key: "checkout_date",
-      render: (text) => dayjs(text).format("YYYY-MM-DD"),
+      render: (text) => dayjs(text).format("DD/MM/YYYY"),
     },
     {
       title: "Durum",
@@ -311,7 +311,7 @@ const ReservationPage = () => {
                   value: value ? dayjs(value) : "",
                 })}
               >
-                <DatePicker format="YYYY-MM-DD" />
+                <DatePicker format="DD/MM/YYYY" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -325,7 +325,7 @@ const ReservationPage = () => {
                   value: value ? dayjs(value) : "",
                 })}
               >
-                <DatePicker format="YYYY-MM-DD" />
+                <DatePicker format="DD/MM/YYYY" />
               </Form.Item>
             </Col>
           </Row>
@@ -414,7 +414,7 @@ const ReservationPage = () => {
                   value: value ? dayjs(value) : "",
                 })}
               >
-                <DatePicker format="YYYY-MM-DD" />
+                <DatePicker format="DD/MM/YYYY" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -428,7 +428,7 @@ const ReservationPage = () => {
                   value: value ? dayjs(value) : "",
                 })}
               >
-                <DatePicker format="YYYY-MM-DD" />
+                <DatePicker format="DD/MM/YYYY" />
               </Form.Item>
             </Col>
           </Row>

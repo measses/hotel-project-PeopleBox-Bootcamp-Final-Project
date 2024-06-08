@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTodos } from "../../redux/slices/todoSlice";
+import { fetchTodos, updateTodo } from "../../redux/slices/todoSlice";
 import {
   Card,
   CardBody,
   CardHeader,
   Typography,
+  Checkbox,
 } from "@material-tailwind/react";
 import { FaClipboardList } from "react-icons/fa";
 
@@ -17,8 +18,12 @@ const TodoList = () => {
     dispatch(fetchTodos());
   }, [dispatch]);
 
-  // İlk 5 görevi almak için dilimleme işlemi
+  // İlk 5 görevi listele
   const displayedTodos = todos.slice(0, 5);
+
+  const handleConfirm = (todo) => {
+    dispatch(updateTodo({ ...todo, isConfirmed: todo.isConfirmed ? 0 : 1 }));
+  };
 
   return (
     <Card className="mb-8">
@@ -43,13 +48,25 @@ const TodoList = () => {
         {displayedTodos.map((item) => (
           <div
             key={item.id}
-            className="p-2 flex items-center justify-between border-b border-gray-200"
+            className={`p-4 flex flex-col border-b border-gray-200 ${
+              item.isConfirmed ? "line-through" : ""
+            }`}
           >
-            <Typography variant="small" color="blue-gray">
-              {item.title}
-            </Typography>
-            <Typography variant="small" color="gray">
-              {item.dueDate}
+            <div className="flex justify-between items-center">
+              <Typography variant="small" color="blue-gray">
+                {item.title}
+              </Typography>
+              <Typography variant="small" color="gray">
+                {item.dueDate}
+              </Typography>
+              <Checkbox
+                checked={item.isConfirmed}
+                onChange={() => handleConfirm(item)}
+                className="ml-2"
+              />
+            </div>
+            <Typography variant="body2" color="blue-gray" className="mt-2">
+              {item.description}
             </Typography>
           </div>
         ))}

@@ -13,7 +13,14 @@ const Users = () => {
   }, [dispatch]);
 
   if (loading) return <Spin />;
-  if (error) return <Alert message="Error" description={error} type="error" />;
+  if (error)
+    return (
+      <Alert
+        message="Yetki Hatası"
+        description="Burayı görmek ve işlem gerçekleştirmek için yeterli yetkiniz bulunmamaktadır. "
+        type="error"
+      />
+    );
 
   // İlk 3 kullanıcıyı almak için dilimleme işlemi
   const displayedUsers = users.slice(0, 3);

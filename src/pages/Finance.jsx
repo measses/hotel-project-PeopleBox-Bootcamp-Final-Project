@@ -29,11 +29,6 @@ import {
   deleteRevenue,
 } from "../redux/slices/revenueSlice";
 
-import {
-  updateReservation,
-  fetchReservations,
-} from "../redux/slices/reservationSlice";
-
 import dayjs from "dayjs";
 
 const { Option } = Select;
@@ -50,12 +45,14 @@ const IncomeTable = ({ incomeData, onEdit, onDelete }) => {
       title: "Tarih",
       dataIndex: "revenue_date",
       key: "revenue_date",
+      sorter: (a, b) => dayjs(a.revenue_date) - dayjs(b.revenue_date),
       render: (text) => dayjs(text).format("YYYY-MM-DD"),
     },
     {
       title: "Miktar",
       dataIndex: "amount",
       key: "amount",
+      sorter: (a, b) => a.amount - b.amount,
     },
     {
       title: "İşlemler",
@@ -189,6 +186,21 @@ const FinancePage = () => {
       const values = await editForm.validateFields();
       editForm.resetFields();
       setIsEditModalOpen(false);
+
+      const updatedValues = {
+        ...values,
+        id: editingItem.id,
+      };
+
+      if (activeTable === "income") {
+        dispatch(updateRevenue(updatedValues))
+          .then(() => dispatch(fetchRevenue()))
+          .then(() => message.success("Gelir başarıyla güncellendi!"));
+      } else if (activeTable === "expenses") {
+        dispatch(updateExpense(updatedValues))
+          .then(() => dispatch(fetchExpenses()))
+          .then(() => message.success("Gider başarıyla güncellendi!"));
+      }
     } catch (error) {
       console.error("Validate Failed:", error);
     }
@@ -296,7 +308,7 @@ const FinancePage = () => {
                   value: value ? dayjs(value) : "",
                 })}
               >
-                <DatePicker format="YYYY-MM-DD" />
+                <DatePicker format="DD/MM/YYYY" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -310,7 +322,7 @@ const FinancePage = () => {
                 <Select>
                   {activeTable === "income" ? (
                     <>
-                      <Option value="Oda Kiralama">Oda Kiralama</Option>
+                      <Option value="Kiralama">Oda Kiralama</Option>
                       <Option value="Servis">Hizmetler</Option>
                       <Option value="Diğer">Diğer</Option>
                     </>
@@ -376,7 +388,7 @@ const FinancePage = () => {
                   value: value ? dayjs(value) : "",
                 })}
               >
-                <DatePicker format="YYYY-MM-DD" />
+                <DatePicker format="DD/MM/YYYY" />
               </Form.Item>
             </Col>
             <Col span={12}>
