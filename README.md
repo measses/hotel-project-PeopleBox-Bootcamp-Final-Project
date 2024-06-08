@@ -42,8 +42,9 @@ Measses Hotel, kullanıcıların otel rezervasyonlarını yönetmelerini, kullan
 ![users](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/bc229f7d-f639-44e6-a330-27bed23dbf68)
 #### Görevler
 ![todo](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/cc1b4916-669d-4dd9-aa74-5800eb9c4845)
+#### Profil
+![profile](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/cac1cff0-1b49-4e0d-97c5-18159a5c4af7)
 
-  
 ## Proje İçeriği
 
 #### Kullanıcı Yönetimi
