@@ -15,6 +15,7 @@ import {
   DatePicker,
 } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import "antd/dist/reset.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchReservations,

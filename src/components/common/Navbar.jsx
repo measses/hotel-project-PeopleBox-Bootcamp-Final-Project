@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../redux/slices/authSlice";
 import {
@@ -15,7 +15,9 @@ import {
 } from "react-icons/fa";
 
 const Navbar = ({ isAuthenticated }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
@@ -29,6 +31,12 @@ const Navbar = ({ isAuthenticated }) => {
     }
   };
 
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const isActive = (path) => location.pathname === path;
+
   return (
     <div>
       <nav className="bg-gray-800">
@@ -39,10 +47,11 @@ const Navbar = ({ isAuthenticated }) => {
                 type="button"
                 className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                 aria-controls="mobile-menu"
-                aria-expanded="false"
+                aria-expanded={menuOpen ? "true" : "false"}
+                onClick={toggleMenu}
               >
                 <svg
-                  className="block h-6 w-6"
+                  className={`${menuOpen ? "hidden" : "block"} h-6 w-6`}
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
@@ -56,7 +65,7 @@ const Navbar = ({ isAuthenticated }) => {
                   />
                 </svg>
                 <svg
-                  className="hidden h-6 w-6"
+                  className={`${menuOpen ? "block" : "hidden"} h-6 w-6`}
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
@@ -84,16 +93,23 @@ const Navbar = ({ isAuthenticated }) => {
                   <div className="flex space-x-4">
                     <Link
                       to="/"
-                      className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
-                      aria-current="page"
+                      className={`rounded-md px-3 py-2 text-sm font-medium flex items-center ${
+                        isActive("/")
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                      }`}
+                      aria-current={isActive("/") ? "page" : undefined}
                     >
                       <FaHome className="mr-2" /> Anasayfa
                     </Link>
-
                     {user?.user_type === "admin" && (
                       <Link
                         to="/finance"
-                        className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                        className={`rounded-md px-3 py-2 text-sm font-medium flex items-center ${
+                          isActive("/finance")
+                            ? "bg-gray-900 text-white"
+                            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                        }`}
                       >
                         <FaMoneyBillWave className="mr-2" /> Gelir-Gider
                         Yönetimi
@@ -101,26 +117,42 @@ const Navbar = ({ isAuthenticated }) => {
                     )}
                     <Link
                       to="/rooms"
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                      className={`rounded-md px-3 py-2 text-sm font-medium flex items-center ${
+                        isActive("/rooms")
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                      }`}
                     >
                       <FaBed className="mr-2" /> Odaların Durumu
                     </Link>
                     <Link
                       to="/reservations"
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                      className={`rounded-md px-3 py-2 text-sm font-medium flex items-center ${
+                        isActive("/reservations")
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                      }`}
                     >
                       <FaCalendarCheck className="mr-2" /> Rezervasyonlar
                     </Link>
                     <Link
                       to="/todos"
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                      className={`rounded-md px-3 py-2 text-sm font-medium flex items-center ${
+                        isActive("/todos")
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                      }`}
                     >
                       <FaClipboardList className="mr-2" /> Görevler
                     </Link>
                     {user?.user_type === "admin" && (
                       <Link
                         to="/user-management"
-                        className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                        className={`rounded-md px-3 py-2 text-sm font-medium flex items-center ${
+                          isActive("/user-management")
+                            ? "bg-gray-900 text-white"
+                            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                        }`}
                       >
                         <FaUserCog className="mr-2" /> Kullanıcı Yönetimi
                       </Link>
@@ -134,7 +166,11 @@ const Navbar = ({ isAuthenticated }) => {
                 <>
                   <Link
                     to="/profile"
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                    className={`rounded-md px-3 py-2 text-sm font-medium flex items-center ${
+                      isActive("/profile")
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    }`}
                   >
                     <FaUserCog className="mr-2" /> Profil
                   </Link>
@@ -150,13 +186,21 @@ const Navbar = ({ isAuthenticated }) => {
                 <>
                   <Link
                     to="/login"
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                    className={`rounded-md px-3 py-2 text-sm font-medium flex items-center ${
+                      isActive("/login")
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    }`}
                   >
                     <FaSignInAlt className="mr-2" /> Giriş Yap
                   </Link>
                   <Link
                     to="/register"
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center"
+                    className={`rounded-md px-3 py-2 text-sm font-medium flex items-center ${
+                      isActive("/register")
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    }`}
                   >
                     <FaUserPlus className="mr-2" /> Kayıt Ol
                   </Link>
@@ -166,45 +210,72 @@ const Navbar = ({ isAuthenticated }) => {
           </div>
         </div>
         {isAuthenticated && (
-          <div className="sm:hidden" id="mobile-menu">
+          <div
+            className={`${menuOpen ? "block" : "hidden"} sm:hidden`}
+            id="mobile-menu"
+          >
             <div className="space-y-1 px-2 pb-3 pt-2">
               <Link
                 to="/"
-                className="bg-gray-900 text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
-                aria-current="page"
+                className={`rounded-md px-3 py-2 text-base font-medium flex items-center ${
+                  isActive("/")
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                }`}
+                aria-current={isActive("/") ? "page" : undefined}
               >
                 <FaHome className="mr-2" /> Anasayfa
               </Link>
               {user?.user_type === "admin" && (
                 <Link
                   to="/finance"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
+                  className={`rounded-md px-3 py-2 text-base font-medium flex items-center ${
+                    isActive("/finance")
+                      ? "bg-gray-900 text-white"
+                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                  }`}
                 >
                   <FaMoneyBillWave className="mr-2" /> Gelir-Gider Yönetimi
                 </Link>
               )}
               <Link
                 to="/rooms"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
+                className={`rounded-md px-3 py-2 text-base font-medium flex items-center ${
+                  isActive("/rooms")
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                }`}
               >
                 <FaBed className="mr-2" /> Odaların Durumu
               </Link>
               <Link
                 to="/reservations"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
+                className={`rounded-md px-3 py-2 text-base font-medium flex items-center ${
+                  isActive("/reservations")
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                }`}
               >
                 <FaCalendarCheck className="mr-2" /> Rezervasyonlar
               </Link>
               <Link
                 to="/todos"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
+                className={`rounded-md px-3 py-2 text-base font-medium flex items-center ${
+                  isActive("/todos")
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                }`}
               >
                 <FaClipboardList className="mr-2" /> Görevler
               </Link>
               {user?.user_type === "admin" && (
                 <Link
                   to="/user-management"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium flex items-center"
+                  className={`rounded-md px-3 py-2 text-base font-medium flex items-center ${
+                    isActive("/user-management")
+                      ? "bg-gray-900 text-white"
+                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                  }`}
                 >
                   <FaUserCog className="mr-2" /> Kullanıcı Yönetimi
                 </Link>

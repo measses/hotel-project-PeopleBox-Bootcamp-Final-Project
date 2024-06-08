@@ -8,7 +8,7 @@ const PrivateRoute = ({
   allowedTypes,
 }) => {
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" />; //eğer kullanıcı giriş yapmamışsa login sayfasına yönlendirilir
   }
 
   if (allowedTypes && !allowedTypes.includes(userType)) {

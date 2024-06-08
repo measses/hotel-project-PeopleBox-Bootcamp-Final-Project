@@ -102,19 +102,19 @@ const Profile = () => {
           <Input />
         </Form.Item>
         <Form.Item
-          label="Username"
+          label="Kullanıcı Adı"
           name="username"
           rules={[{ required: true, message: "Please enter your username" }]}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item label="Password" name="password">
+        <Form.Item label="Şifre" name="password">
           <Input.Password />
         </Form.Item>
 
         <Form.Item
-          label="Profile Picture"
+          label="Profil Fotoğrafı"
           name="profile_picture"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -126,12 +126,12 @@ const Profile = () => {
             onChange={handleChange}
             beforeUpload={() => false}
           >
-            <Button icon={<UploadOutlined />}>Upload Profile Picture</Button>
+            <Button icon={<UploadOutlined />}>Profil Fotoğrafı Yükle</Button>
           </Upload>
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" block>
-            Update Profile
+            Profili Güncelle
           </Button>
         </Form.Item>
       </Form>

@@ -28,15 +28,15 @@ const Register = () => {
       const result = await dispatch(register(values)).unwrap();
       if (result.success) {
         message.success(
-          "Registration successful. Please check your email to verify your account."
+          "Kayıt başarılı. Lütfen hesabınızı doğrulamak için e-posta adresinizi kontrol edin."
         );
         setEmail(values.email);
         setIsVerifyModalVisible(true);
       } else {
-        showModal("Registration Error", result.message);
+        showModal("Kayıt Hatası", result.message);
       }
     } catch (err) {
-      showModal("Registration Error", err.message);
+      showModal("Kayıt Hatası", err.message);
     }
   };
 
@@ -52,14 +52,14 @@ const Register = () => {
         }
       );
       if (response.data.success) {
-        message.success("Email successfully verified!");
+        message.success("E-posta başarıyla doğrulandı!");
         setIsVerifyModalVisible(false);
         navigate("/login");
       } else {
-        showModal("Verification Error", response.data.message);
+        showModal("Doğrulama Hatası", response.data.message);
       }
     } catch (err) {
-      showModal("Verification Error", err.message);
+      showModal("Doğrulama Hatası", err.message);
     }
   };
 
@@ -74,9 +74,12 @@ const Register = () => {
         </Title>
         <Form form={form} onFinish={handleRegister} layout="vertical">
           <Form.Item
-            label="Username"
+            label="Kullanıcı Adı"
             name="username"
-            rules={[{ required: true, message: "Please enter your username" }]}
+            rules={[
+              { required: true, message: "Lütfen kullanıcı adını giriniz" },
+              { min: 3, message: "Kullanıcı adı en az 3 karakter olmalıdır" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -84,31 +87,38 @@ const Register = () => {
             label="Email"
             name="email"
             rules={[
-              { required: true, message: "Please enter your email" },
-              { type: "email", message: "Please enter a valid email" },
+              { required: true, message: "Lütfen email giriniz" },
+              { type: "email", message: "Lütfen geçerli bir email giriniz" },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Password"
+            label="Şifre"
             name="password"
-            rules={[{ required: true, message: "Please enter your password" }]}
+            rules={[
+              { required: true, message: "Lütfen şifrenizi giriniz" },
+              {
+                pattern: /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
+                message:
+                  "Şifre en az 8 karakter olmalı ve en az bir büyük harf ve bir küçük harf içermelidir",
+              },
+            ]}
           >
             <Input.Password />
           </Form.Item>
           <Form.Item
-            label="Confirm Password"
+            label="Şifreyi Onayla"
             name="confirm_password"
             rules={[
-              { required: true, message: "Please confirm your password" },
+              { required: true, message: "Lütfen şifrenizi onaylayın" },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue("password") === value) {
                     return Promise.resolve();
                   }
                   return Promise.reject(
-                    new Error("The two passwords do not match")
+                    new Error("İki şifre birbiriyle uyuşmuyor")
                   );
                 },
               }),
@@ -118,34 +128,34 @@ const Register = () => {
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading} block>
-              Register
+              Kayıt Ol
             </Button>
           </Form.Item>
         </Form>
         <div style={{ textAlign: "center" }}>
-          Already have an account? <Link to="/login">Login</Link>
+          Zaten hesabınız var mı? <Link to="/login">Giriş Yapın</Link>
         </div>
       </Card>
 
       <Modal
-        title="Verify Email"
+        title="E-posta Doğrulama"
         visible={isVerifyModalVisible}
         onCancel={() => setIsVerifyModalVisible(false)}
         footer={null}
       >
         <Form form={verifyForm} onFinish={handleVerify} layout="vertical">
           <Form.Item
-            label="Verification Code"
+            label="Doğrulama Kodu"
             name="code"
             rules={[
-              { required: true, message: "Please enter the verification code" },
+              { required: true, message: "Lütfen doğrulama kodunu giriniz" },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading} block>
-              Verify
+              Doğrula
             </Button>
           </Form.Item>
         </Form>

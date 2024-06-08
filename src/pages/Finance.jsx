@@ -30,9 +30,9 @@ import {
 } from "../redux/slices/revenueSlice";
 
 import dayjs from "dayjs";
+import "antd/dist/reset.css";
 
 const { Option } = Select;
-const { Search } = Input;
 
 const IncomeTable = ({ incomeData, onEdit, onDelete }) => {
   const columns = [
@@ -53,6 +53,11 @@ const IncomeTable = ({ incomeData, onEdit, onDelete }) => {
       dataIndex: "amount",
       key: "amount",
       sorter: (a, b) => a.amount - b.amount,
+    },
+    {
+      title: "Açıklama",
+      dataIndex: "description",
+      key: "description",
     },
     {
       title: "İşlemler",
@@ -99,6 +104,11 @@ const ExpensesTable = ({ expensesData, onEdit, onDelete }) => {
       title: "Miktar",
       dataIndex: "amount",
       key: "amount",
+    },
+    {
+      title: "Açıklama",
+      dataIndex: "description",
+      key: "description",
     },
     {
       title: "İşlemler",
@@ -252,20 +262,22 @@ const FinancePage = () => {
         </Button>
       </div>
 
-      {activeTable === "income" && (
-        <IncomeTable
-          incomeData={revenue}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      )}
-      {activeTable === "expenses" && (
-        <ExpensesTable
-          expensesData={expenses}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      )}
+      <div className="overflow-x-auto">
+        {activeTable === "income" && (
+          <IncomeTable
+            incomeData={revenue}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        )}
+        {activeTable === "expenses" && (
+          <ExpensesTable
+            expensesData={expenses}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        )}
+      </div>
 
       <Modal
         title={activeTable === "income" ? "Yeni Gelir Ekle" : "Yeni Gider Ekle"}
@@ -277,7 +289,7 @@ const FinancePage = () => {
       >
         <Form form={form} layout="vertical" name="itemForm">
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 name="description"
                 label="Açıklama"
@@ -288,7 +300,7 @@ const FinancePage = () => {
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 name="amount"
                 label="Miktar"
@@ -299,7 +311,7 @@ const FinancePage = () => {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 name="date"
                 label="Tarih"
@@ -311,7 +323,7 @@ const FinancePage = () => {
                 <DatePicker format="DD/MM/YYYY" />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 name="category"
                 label="Kategori"
@@ -357,7 +369,7 @@ const FinancePage = () => {
           initialValues={editingItem}
         >
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 name="description"
                 label="Açıklama"
@@ -368,7 +380,7 @@ const FinancePage = () => {
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 name="amount"
                 label="Miktar"
@@ -379,7 +391,7 @@ const FinancePage = () => {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 name="date"
                 label="Tarih"
@@ -391,7 +403,7 @@ const FinancePage = () => {
                 <DatePicker format="DD/MM/YYYY" />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 name="category"
                 label="Kategori"

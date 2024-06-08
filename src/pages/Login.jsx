@@ -23,7 +23,7 @@ const Login = () => {
     try {
       const result = await dispatch(login(values)).unwrap();
       if (result.success) {
-        message.success("Login successful");
+        message.success("Giriş Başarılı!");
         navigate("/");
       } else {
         showModal("Login Error", result.message);
@@ -44,28 +44,30 @@ const Login = () => {
         </Title>
         <Form form={form} onFinish={handleLogin} layout="vertical">
           <Form.Item
-            label="Username"
+            label="Kullanıcı Adı"
             name="username"
-            rules={[{ required: true, message: "Please enter your username" }]}
+            rules={[
+              { required: true, message: "Lütfen kullanıcı adınızı girin" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Password"
+            label="Şifre"
             name="password"
-            rules={[{ required: true, message: "Please enter your password" }]}
+            rules={[{ required: true, message: "Lütfen şifrenizi girin" }]}
           >
             <Input.Password />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading} block>
-              Login
+              Giriş Yap
             </Button>
           </Form.Item>
         </Form>
         {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
         <div style={{ textAlign: "center" }}>
-          Don't have an account? <Link to="/register">Register</Link>
+          Hesabın yok mu? <Link to="/register">Kaydol</Link>
         </div>
       </Card>
     </div>

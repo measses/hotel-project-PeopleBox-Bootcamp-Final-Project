@@ -79,17 +79,17 @@ const expensesSlice = createSlice({
       .addCase(addExpense.fulfilled, (state, action) => {
         state.expenses.push(action.payload);
       })
-      .addCase(updateExpense.fulfilled, (state, action) => {
-        const index = state.expenses.findIndex(
-          (expense) => expense.id === action.payload.id
+      .addCase(updateExpense.fulfilled, (state, action) => { //fulfilled durumunda güncelleme işlemi başarılı olursa state'de güncelleme işlemi yapılıyor
+        const index = state.expenses.findIndex( //findIndex metodu ile güncellenmek istenen id'yi buluyoruz
+          (expense) => expense.id === action.payload.id //action.payload'dan gelen id'yi buluyoruz
         );
         if (index !== -1) {
           state.expenses[index] = action.payload;
         }
       })
-      .addCase(deleteExpense.fulfilled, (state, action) => {
-        state.expenses = state.expenses.filter(
-          (expense) => expense.id !== action.payload
+      .addCase(deleteExpense.fulfilled, (state, action) => { //fulfilled durumunda silme işlemi başarılı olursa state'den silme işlemi yapılıyor
+        state.expenses = state.expenses.filter( //filter metodu ile silinmek istenen id'yi filtreleyerek state'den siliyoruz
+          (expense) => expense.id !== action.payload //action.payload'dan gelen id'yi filtreleyerek state'den siliyoruz
         );
       });
   },

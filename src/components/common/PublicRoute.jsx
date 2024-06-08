@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 
 const PublicRoute = ({ children, isAuthenticated }) => {
   if (isAuthenticated) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" />; //eğer kullanıcı giriş yapmışsa anasayfaya yönlendirilir
   }
   return children;
 };
