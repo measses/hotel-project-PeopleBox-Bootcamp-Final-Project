@@ -14,23 +14,32 @@ $db = $database->connect();
 $room = new Room($db);
 $data = json_decode(file_get_contents("php://input"), true);
 
+$response = ['success' => false, 'message' => ''];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($room->create($data)) {
-        echo json_encode(['message' => 'Room Created']);
+        $response['success'] = true;
+        $response['message'] = 'Oda Eklendi';
     } else {
-        echo json_encode(['message' => 'Room Not Created', 'error' => 'Room number already exists']);
+        $response['message'] = 'Oda Eklenemedi. Oda numarası zaten mevcut';
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-    if ($room->update($data['id'], $data)) {
-        echo json_encode(['message' => 'Room Updated']);
+    $result = $room->update($data['id'], $data);
+    if ($result['success']) {
+        $response['success'] = true;
+        $response['message'] = 'Oda Güncellendi';
     } else {
-        echo json_encode(['message' => 'Room Not Updated', 'error' => 'Room number already exists or other error occurred']);
+        $response['message'] = 'Oda Güncellenemedi. ' . $result['error'];
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-    if ($room->delete($data['id'])) {
-        echo json_encode(['message' => 'Room Deleted']);
+    $result = $room->delete($data['id']);
+    if ($result['success']) {
+        $response['success'] = true;
+        $response['message'] = 'Oda Silindi';
     } else {
-        echo json_encode(['message' => 'Room Not Deleted']);
+        $response['message'] = 'Oda Silinemedi. ' . $result['message'];
     }
 }
+
+echo json_encode($response);
 ?>

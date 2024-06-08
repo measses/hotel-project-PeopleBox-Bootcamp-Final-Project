@@ -158,6 +158,20 @@ class User {
     
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function deleteUser($id) {
+        $query = "DELETE FROM " . $this->table . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+    
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            throw new Exception('Kullanıcı silme işlemi başarısız oldu.');
+        }
+    }
+    
     
 
     public function usernameExists($username) {

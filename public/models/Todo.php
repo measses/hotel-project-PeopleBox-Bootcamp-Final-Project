@@ -8,7 +8,7 @@ class Todo extends BaseCrud {
     public $user_id;
     public $title;
     public $description;
-    public $is_completed;
+    public $isConfirmed;
     public $created_at;
     public $updated_at;
     public $deleted_at;
@@ -87,18 +87,20 @@ class Todo extends BaseCrud {
     }
 
     public function update($id, $data) {
-        $query = 'UPDATE ' . $this->table . ' SET title = :title, description = :description, user_id = :user_id, dueDate = :dueDate WHERE id = :id';
+        $query = 'UPDATE ' . $this->table . ' SET title = :title, description = :description, user_id = :user_id, dueDate = :dueDate, isConfirmed = :isConfirmed WHERE id = :id';
         $stmt = $this->connection->prepare($query);
 
         $this->title = htmlspecialchars(strip_tags($data['title']));
         $this->description = htmlspecialchars(strip_tags($data['description']));
         $this->user_id = htmlspecialchars(strip_tags($data['user_id']));
         $this->dueDate = htmlspecialchars(strip_tags($data['dueDate']));
+        $this->isConfirmed = isset($data['isConfirmed']) ? htmlspecialchars(strip_tags($data['isConfirmed'])) : 0;
 
         $stmt->bindParam(':title', $this->title);
         $stmt->bindParam(':description', $this->description);
         $stmt->bindParam(':user_id', $this->user_id);
         $stmt->bindParam(':dueDate', $this->dueDate);
+        $stmt->bindParam(':isConfirmed', $this->isConfirmed);
         $stmt->bindParam(':id', $id);
 
         try {

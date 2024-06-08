@@ -14,9 +14,11 @@ $db = $database->connect();
 $room = new Room($db);
 $data = json_decode(file_get_contents("php://input"), true);
 
-if ($room->update($data['id'], $data)) {
-    echo json_encode(['message' => 'Room Updated']);
+$result = $room->update($data['id'], $data);
+
+if ($result['success']) {
+    echo json_encode(['success' => true, 'message' => 'Oda Başarıyla Güncellendi']);
 } else {
-    echo json_encode(['message' => 'Room Not Updated', 'error' => 'Room number already exists or other error occurred']);
+    echo json_encode(['success' => false, 'message' => 'Oda Güncellenemedi!', 'error' => $result['error']]);
 }
 ?>

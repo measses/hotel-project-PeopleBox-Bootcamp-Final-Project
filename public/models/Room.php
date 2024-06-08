@@ -70,8 +70,9 @@ class Room extends BaseCrud {
         }
         $result = $stmt->execute();
     
-        return ['success' => $result, 'error' => $result ? null : 'An error occurred while updating the room'];
+        return ['success' => $result, 'message' => $result ? 'Room Updated' : 'An error occurred while updating the room'];
     }
+    
     
     
 
