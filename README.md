@@ -26,10 +26,25 @@ Measses Hotel, kullanıcıların otel rezervasyonlarını yönetmelerini, kullan
 
   
 ## Demo
+#### Kayıt 
+![register](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/56f00edc-4c80-4195-9e93-476d69f056c3)
+#### Giriş 
+![login](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/b3a88e0c-bdb2-4de8-b6f5-676da24d04f0)
+#### Anasayfa 
+![home](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/2a95bdcd-c601-407f-b42a-0fd73be87109)
+#### Oda Listesi
+![room](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/9dd1d342-96c0-4f88-9cb4-31c08ebe0cfb)
+#### Rezervasyon
+![rez](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/7e43b4d6-f3b0-4b0e-9860-1a4cc1a30311)
+#### Gelir - Gider
+![gelir](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/bea12521-7d83-4c28-84a1-d63e9ca9d626)
+#### Kullanıcılar
+![users](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/bc229f7d-f639-44e6-a330-27bed23dbf68)
+#### Görevler
+![todo](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/cc1b4916-669d-4dd9-aa74-5800eb9c4845)
+#### Profil
+![profile](https://github.com/measses/hotel-project-PeopleBox-Bootcamp-Final-Project/assets/67739721/cac1cff0-1b49-4e0d-97c5-18159a5c4af7)
 
-Demoya gif veya bağlantı ekleyin
-
-  
 ## Proje İçeriği
 
 #### Kullanıcı Yönetimi
