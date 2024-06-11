@@ -11,15 +11,15 @@ function sendVerificationEmail($email, $code) {
     try {
         //Server settings
         $mail->isSMTP();
-        $mail->Host = 'mail.buukalemun.com'; 
+        $mail->Host = 'smtp.gmail.com'; 
         $mail->SMTPAuth = true;
-        $mail->Username = 'info@buukalemun.com'; 
-        $mail->Password = 'CDcPKDHrF-jCMJ!';
+        $mail->Username = 'your_email_here'; 
+        $mail->Password = 'your_password_here';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = 465;
 
         //Recipients
-        $mail->setFrom('info@buukalemun.com', 'Measses '); 
+        $mail->setFrom('your_email_here', 'Hotel Management System'); 
         $mail->addAddress($email);
 
         //Content
