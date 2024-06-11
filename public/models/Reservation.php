@@ -1,8 +1,7 @@
 <?php
 
 include_once '../../core/Model.php';
-include_once 'Revenue.php';  // Revenue modelini dahil ediyoruz
-
+include_once 'Revenue.php'; 
 class Reservation extends BaseCrud {
     // Özellikler
     public $id;
@@ -24,36 +23,30 @@ class Reservation extends BaseCrud {
 
     private function addRevenue($reservationId, $data) {
         $query = 'INSERT INTO revenue (description, amount, revenue_date, category, created_at, updated_at) 
-                VALUES (:description, :amount, :revenue_date, :category, NOW(), NOW())';
-        $stmt = $this->connection->prepare($query);
-        $stmt->bindValue(':description', 'Room Reservation ' . $reservationId);
-        $stmt->bindValue(':amount', $data['total_price']);
-        $stmt->bindValue(':revenue_date', $data['checkin_date']);
-        $stmt->bindValue(':category', 'room_rent');
-        $stmt->execute();
+                VALUES (:description, :amount, :revenue_date, :category, NOW(), NOW())'; 
+        $stmt = $this->connection->prepare($query); //Burada revenue tablosuna ekleme yapılıyor ve room_rent kategorisine göre ekleniyor.
+        $stmt->bindValue(':description', 'Room Reservation ' . $reservationId); //reservationId ile rezervasyon numarası ekleniyor.
+        $stmt->bindValue(':amount', $data['total_price']); //Toplam fiyat ekleniyor. bindValue ile veri tipi belirleniyor.
+        $stmt->bindValue(':revenue_date', $data['checkin_date']);// Checkin tarihi ekleniyor.
+        $stmt->bindValue(':category', 'room_rent'); //Kategori room_rent olarak ekleniyor.
+        $stmt->execute(); //Sorgu çalıştırılıyor.
     }
 
     private function getRoomByNumber($room_number) {
-        $query = 'SELECT * FROM rooms WHERE room_number = :room_number AND deleted_at IS NULL';
-        $stmt = $this->connection->prepare($query);
-        $stmt->bindParam(':room_number', $room_number);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $query = 'SELECT * FROM rooms WHERE room_number = :room_number AND deleted_at IS NULL'; //veritabanından oda numarasına göre oda bilgileri çekiliyor.
+        $stmt = $this->connection->prepare($query); //Sorgu hazırlanıyor.
+        $stmt->bindParam(':room_number', $room_number); //Oda numarası bind ediliyor.
+        $stmt->execute(); //Sorgu çalıştırılıyor.
+        return $stmt->fetch(PDO::FETCH_ASSOC); //Sorgudan dönen veri fetch ediliyor.
     }
 
-    private function isDateValid($checkin_date, $checkout_date) {
-        $current_date = new DateTime();
-        $checkin_date = new DateTime($checkin_date);
-        $checkout_date = new DateTime($checkout_date);
+    private function isDateValid($checkin_date, $checkout_date) { //Tarihlerin geçerli olup olmadığını kontrol eden fonksiyon.
+        $current_date = new DateTime(); //Şu anki tarih alınıyor.
+        $checkin_date = new DateTime($checkin_date); //Checkin tarihi alınıyor.
+        $checkout_date = new DateTime($checkout_date); //Checkout tarihi alınıyor.
 
-        // Hata ayıklama: Kontrol edilen tarihleri loglayın
-        error_log("Current Date: " . $current_date->format('Y-m-d H:i:s'));
-        error_log("Check-in Date: " . $checkin_date->format('Y-m-d H:i:s'));
-        error_log("Check-out Date: " . $checkout_date->format('Y-m-d H:i:s'));
-        error_log("Check-in >= Current: " . ($checkin_date >= $current_date ? 'true' : 'false'));
-        error_log("Check-out > Check-in: " . ($checkout_date > $checkin_date ? 'true' : 'false'));
 
-        return $checkin_date >= $current_date && $checkout_date > $checkin_date;
+        return $checkin_date >= $current_date && $checkout_date > $checkin_date;    //Checkin tarihi şu anki tarihten büyük ve checkout tarihi checkin tarihinden büyük olmalı.
     }
 
     public function create($data) {
@@ -83,16 +76,16 @@ class Reservation extends BaseCrud {
             return ['success' => false, 'message' => 'Invalid check-in or check-out date'];
         }
 
-        $fields = implode(", ", array_keys($data));
-        $values = ":" . implode(", :", array_keys($data));
-        $query = 'INSERT INTO ' . $this->table . ' (' . $fields . ', created_at, updated_at) VALUES (' . $values . ', NOW(), NOW())';
-        $stmt = $this->connection->prepare($query);
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(':' . $key, $value);
+        $fields = implode(", ", array_keys($data)); //Veritabanına eklenecek alanlar belirleniyor.
+        $values = ":" . implode(", :", array_keys($data));  //Veritabanına eklenecek değerler belirleniyor.
+        $query = 'INSERT INTO ' . $this->table . ' (' . $fields . ', created_at, updated_at) VALUES (' . $values . ', NOW(), NOW())'; //Sorgu oluşturuluyor.
+        $stmt = $this->connection->prepare($query); //Sorgu hazırlanıyor.
+        foreach ($data as $key => $value) { //Veriler bind ediliyor.
+            $stmt->bindValue(':' . $key, $value); //Bind ediliyor.
         }
         $result = $stmt->execute();
 
-        if ($result && isset($data['status']) && $data['status'] === 'confirmed') {
+        if ($result && isset($data['status']) && $data['status'] === 'confirmed') { //Eğer rezervasyon onaylandıysa revenue tablosuna ekleme yapılıyor.
             $this->addRevenue($this->connection->lastInsertId(), $data);
         }
 

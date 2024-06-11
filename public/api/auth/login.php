@@ -38,11 +38,11 @@ if (isset($data["username"]) && isset($data["password"])) {
             'userType' => $result['user_type']
         );
 
-        $jwt = JWT::encode($payload, JWT_SECRET, JWT_ALGORITHM);
+        $jwt = JWT::encode($payload, JWT_SECRET, JWT_ALGORITHM); //kullanıcı bilgileri ve jwt token oluşturuldu 
 
         echo json_encode([
             'success' => true,
-            'message' => 'Login successful',
+            'message' => 'Giriş Başarılı!',
             'token' => $jwt,
             'user' => $result 
         ]);

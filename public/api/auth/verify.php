@@ -14,7 +14,7 @@ $user = new User($db);
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (!isset($data['code']) || !isset($data['email'])) {
+if (!isset($data['code']) || !isset($data['email'])) { //eğer kod ve e-posta yoksa hata mesajı döndür
     echo json_encode(['success' => false, 'message' => 'Geçersiz istek']);
     exit;
 }
