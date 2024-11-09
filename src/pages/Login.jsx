@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { login } from "../redux/slices/authSlice";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/images/measses_logo.png"; // Ensure the path to your logo is correct
+import logo from "../assets/images/measses_logo.jpg"; // Ensure the path to your logo is correct
 
 const { Title } = Typography;
 
