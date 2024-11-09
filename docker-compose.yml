@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./public
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=example
+      - DB_NAME=your_database
+    networks:
+      - app-network
+    depends_on:
+      - mysql
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example   # Sadece MYSQL_ROOT_PASSWORD kullanıyoruz
+      MYSQL_DATABASE: your_database
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./public/hotel.sql:/docker-entrypoint-initdb.d/hotel.sql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
